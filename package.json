@@ -1,0 +1,14 @@
+{
+  "name": "camera-test",
+  "version": "1.0.0",
+  "description": "cargo install wasm-pack    cargo new --lib hello-wasm    wasm-pack build --release --target web",
+  "main": "ft.min.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "esprima": "^4.0.1"
+  }
+}

@@ -1,0 +1,2 @@
+cargo:rustc-link-search=/Users/work/fe/camera-test/test-wasm/target/wasm32-unknown-unknown/release/build/wasmedge_quickjs-cbbf2df453748a14/out
+cargo:rustc-link-lib=quickjs

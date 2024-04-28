@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FFmpeg Web Demo</title>
+</head>
+<body>
+    <input type="file" id="fileInput" accept="video/*">
+    <button onclick="handleVideo()">处理视频</button>
+    <video controls id="videoElement"></video>
+
+    <script>
+        // const load = async () => {
+        //     const baseURL = 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd'
+        //     const ffmpeg = ffmpegRef.current;
+        //     ffmpeg.on('log', ({ message }) => {
+        //         messageRef.current.innerHTML = message;
+        //         console.log(message);
+        //     });
+        //     // toBlobURL is used to bypass CORS issue, urls with the same
+        //     // domain can be used directly.
+        //     await ffmpeg.load({
+        //         coreURL: await toBlobURL(`${baseURL}/ffmpeg-core.js`, 'text/javascript'),
+        //         wasmURL: await toBlobURL(`${baseURL}/ffmpeg-core.wasm`, 'application/wasm'),
+        //     });
+        //     console.log('ffmpeg loaded');
+        // }
+        // load()
+        async function handleVideo() {
+            const fileInput = document.getElementById('fileInput');
+            const videoElement = document.getElementById('videoElement');
+
+            // 检查是否选择了文件
+            if (fileInput.files.length === 0) {
+                alert('请选择一个视频文件');
+                return;
+            }
+            
+            console.log(fileInput.files)
+            const file = fileInput.files[0];
+            const ffmpegModule = await loadFFmpegModule();
+
+            // 读取视频文件
+            const fileReader = new FileReader();
+            fileReader.readAsArrayBuffer(file);
+            console.log({fileReader})
+
+            fileReader.onload = async () => {
+                // 将视频文件转换为 Uint8Array
+                const videoData = new Uint8Array(fileReader.result);
+
+                // 使用 FFmpeg 处理视频
+                const result = ffmpegModule({
+                    MEMFS: [{name: file.name, data: videoData}],
+                    arguments: ['-i', file.name, '-c:v', 'libx264', 'output.mp4']
+                });
+
+                // 等待处理完成
+                await result;
+
+                // 显示处理后的视频
+                const processedVideoData = ffmpegModule.FS('readFile', 'output.mp4');
+                const processedVideoBlob = new Blob([processedVideoData], {type: 'video/mp4'});
+                videoElement.src = URL.createObjectURL(processedVideoBlob);
+            };
+        }
+
+        async function loadFFmpegModule() {
+            // 加载 FFmpeg WebAssembly 模块
+            const baseURL = 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd/'
+            const response = await fetch(baseURL+'ffmpeg-core.js');
+            const ffmpegCore = await response.arrayBuffer();
+            console.log(ffmpegCore)
+            const ffmpegModule = await createFFmpeg({
+                log: true,
+                corePath: 'ffmpeg-core.js'
+            });
+
+            await ffmpegModule.load(ffmpegCore);
+            return ffmpegModule;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,3 @@
+/Users/work/fe/guardian-cv-mobile-sdk/build-wasm-example/CMakeFiles/liveness-simd.dir
+/Users/work/fe/guardian-cv-mobile-sdk/build-wasm-example/CMakeFiles/edit_cache.dir
+/Users/work/fe/guardian-cv-mobile-sdk/build-wasm-example/CMakeFiles/rebuild_cache.dir

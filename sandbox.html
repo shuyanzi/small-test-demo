@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sandbox</title>
+</head>
+<body>
+    <iframe>
+    </iframe>
+    <script>
+      const win = frames[0].window;
+      console.log("%c Line:13 🥥 win", "color:#33a5ff", win);
+      console.log(win.globalThis === globalThis); // true
+      console.log(win.Array === Array); // true
+    </script>
+</body>
+</html>

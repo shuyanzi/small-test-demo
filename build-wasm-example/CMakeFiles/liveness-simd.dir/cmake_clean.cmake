@@ -1,0 +1,43 @@
+file(REMOVE_RECURSE
+  "CMakeFiles/liveness-simd.dir/Users/work/fe/guardian-cv-mobile-sdk/src/common/debug_info.cpp.o"
+  "CMakeFiles/liveness-simd.dir/Users/work/fe/guardian-cv-mobile-sdk/src/common/debug_info.cpp.o.d"
+  "CMakeFiles/liveness-simd.dir/Users/work/fe/guardian-cv-mobile-sdk/src/common/encryption.cpp.o"
+  "CMakeFiles/liveness-simd.dir/Users/work/fe/guardian-cv-mobile-sdk/src/common/encryption.cpp.o.d"
+  "CMakeFiles/liveness-simd.dir/Users/work/fe/guardian-cv-mobile-sdk/src/common/encryption_new.cpp.o"
+  "CMakeFiles/liveness-simd.dir/Users/work/fe/guardian-cv-mobile-sdk/src/common/encryption_new.cpp.o.d"
+  "CMakeFiles/liveness-simd.dir/Users/work/fe/guardian-cv-mobile-sdk/src/common/utils.cpp.o"
+  "CMakeFiles/liveness-simd.dir/Users/work/fe/guardian-cv-mobile-sdk/src/common/utils.cpp.o.d"
+  "CMakeFiles/liveness-simd.dir/Users/work/fe/guardian-cv-mobile-sdk/src/liveness/common.cpp.o"
+  "CMakeFiles/liveness-simd.dir/Users/work/fe/guardian-cv-mobile-sdk/src/liveness/common.cpp.o.d"
+  "CMakeFiles/liveness-simd.dir/Users/work/fe/guardian-cv-mobile-sdk/src/liveness/config.cpp.o"
+  "CMakeFiles/liveness-simd.dir/Users/work/fe/guardian-cv-mobile-sdk/src/liveness/config.cpp.o.d"
+  "CMakeFiles/liveness-simd.dir/Users/work/fe/guardian-cv-mobile-sdk/src/liveness/face_box.cpp.o"
+  "CMakeFiles/liveness-simd.dir/Users/work/fe/guardian-cv-mobile-sdk/src/liveness/face_box.cpp.o.d"
+  "CMakeFiles/liveness-simd.dir/Users/work/fe/guardian-cv-mobile-sdk/src/liveness/face_detector.cpp.o"
+  "CMakeFiles/liveness-simd.dir/Users/work/fe/guardian-cv-mobile-sdk/src/liveness/face_detector.cpp.o.d"
+  "CMakeFiles/liveness-simd.dir/Users/work/fe/guardian-cv-mobile-sdk/src/liveness/face_info.cpp.o"
+  "CMakeFiles/liveness-simd.dir/Users/work/fe/guardian-cv-mobile-sdk/src/liveness/face_info.cpp.o.d"
+  "CMakeFiles/liveness-simd.dir/Users/work/fe/guardian-cv-mobile-sdk/src/liveness/face_landmark.cpp.o"
+  "CMakeFiles/liveness-simd.dir/Users/work/fe/guardian-cv-mobile-sdk/src/liveness/face_landmark.cpp.o.d"
+  "CMakeFiles/liveness-simd.dir/Users/work/fe/guardian-cv-mobile-sdk/src/liveness/face_occlusion.cpp.o"
+  "CMakeFiles/liveness-simd.dir/Users/work/fe/guardian-cv-mobile-sdk/src/liveness/face_occlusion.cpp.o.d"
+  "CMakeFiles/liveness-simd.dir/Users/work/fe/guardian-cv-mobile-sdk/src/liveness/motion.cpp.o"
+  "CMakeFiles/liveness-simd.dir/Users/work/fe/guardian-cv-mobile-sdk/src/liveness/motion.cpp.o.d"
+  "CMakeFiles/liveness-simd.dir/Users/work/fe/guardian-cv-mobile-sdk/src/liveness/rules.cpp.o"
+  "CMakeFiles/liveness-simd.dir/Users/work/fe/guardian-cv-mobile-sdk/src/liveness/rules.cpp.o.d"
+  "CMakeFiles/liveness-simd.dir/Users/work/fe/guardian-cv-mobile-sdk/src/liveness/safe_info.cpp.o"
+  "CMakeFiles/liveness-simd.dir/Users/work/fe/guardian-cv-mobile-sdk/src/liveness/safe_info.cpp.o.d"
+  "CMakeFiles/liveness-simd.dir/Users/work/fe/guardian-cv-mobile-sdk/src/liveness/service.cpp.o"
+  "CMakeFiles/liveness-simd.dir/Users/work/fe/guardian-cv-mobile-sdk/src/liveness/service.cpp.o.d"
+  "CMakeFiles/liveness-simd.dir/Users/work/fe/guardian-cv-mobile-sdk/src/models/model.cpp.o"
+  "CMakeFiles/liveness-simd.dir/Users/work/fe/guardian-cv-mobile-sdk/src/models/model.cpp.o.d"
+  "CMakeFiles/liveness-simd.dir/liveness_wasm.cpp.o"
+  "CMakeFiles/liveness-simd.dir/liveness_wasm.cpp.o.d"
+  "liveness-simd.js"
+  "liveness-simd.pdb"
+)
+
+# Per-language clean rules from dependency scanning.
+foreach(lang CXX)
+  include(CMakeFiles/liveness-simd.dir/cmake_clean_${lang}.cmake OPTIONAL)
+endforeach()

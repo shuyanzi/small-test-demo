@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        #video1 {
+            width: 600px
+        }
+        #video2 {
+            width: 600px
+        }
+        canvas {
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+<!-- https://blog.csdn.net/anleng6817/article/details/101126850 -->
+<!-- <video id="video1"  autoplay playsinline></video>
+<hr>
+<video id="video2"  autoplay playsinline></video> -->
+</body>
+<script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/image-capture@0.4.0/lib/imagecapture.min.js"></script>
+
+<script>
+    setTimeout(() => {
+        console.log(adapter.browserDetails.browser);
+        function handleSuccess(stream) {
+            getVideoInputDevice()
+            // console.log("%c Line:26 🍔 stream", "color:#42b983", stream);
+            // var videoTracks = stream.getVideoTracks();
+            // console.log("%c Line:28 🧀 Using video device1: ", "color:red", videoTracks[0].label);
+            // document.getElementById('video1').srcObject = stream;
+
+            const videoTrack = stream.getVideoTracks()[0];
+            const imageCapture = new ImageCapture(videoTrack);
+            console.log("%c Line:1 🍊 imageCapture", "color:#ffdd4d", videoTrack,imageCapture);
+
+            function captureFrame() {
+                imageCapture.grabFrame()
+                .then(function(imageBitmap) {
+                    console.log("%c Line:1 🍊 imageBitmap", "color:#ffdd4d", imageBitmap);
+                    // 将图像位图转换为canvas元素
+                    const canvas = document.createElement('canvas');
+                    canvas.width = imageBitmap.width;
+                    canvas.height = imageBitmap.height;
+                    const context = canvas.getContext('2d');
+                    context.drawImage(imageBitmap, 0, 0);
+                    document.body.appendChild(canvas); 
+                    var constraints2 = window.constraints = {
+                        audio: false,
+                        video: {
+                            width: { ideal: 800 },
+                            height: { ideal: 800 },
+                            aspectRatio: 1,
+                            frameRate: {
+                                ideal: 30,
+                            },
+                            facingMode: 'environment',
+                        },
+                    };
+                    navigator.mediaDevices.getUserMedia(constraints2).then(handleSuccess2).catch(handleError);
+
+                    // 保存帧图像
+                    // saveFrame(canvas);
+
+                    // 处理下一帧
+                    // requestAnimationFrame(captureFrame);
+                })
+                .catch(function(error) {
+                    console.error('1捕获帧图像失败：', error);
+                });
+            }
+            setTimeout(() => {
+                // 开始捕获帧图像
+                captureFrame();
+            }, 3000)
+
+            // getVideoInputDevice()
+            // setTimeout(() => {
+            // var constraints2 = window.constraints = {
+            //     audio: false,
+            //     video: {
+            //         width: { ideal: 800 },
+            //         height: { ideal: 800 },
+            //         aspectRatio: 1,
+            //         frameRate: {
+            //             ideal: 30,
+            //         },
+            //         facingMode: 'environment',
+            //     },
+            // };
+            // navigator.mediaDevices.getUserMedia(constraints2).then(handleSuccess2).catch(handleError);
+        // }, 3000)
+        }
+        
+        function handleSuccess2(stream) {
+                // console.log("%c Line:33 🎂 stream", "color:#e41a6a", stream);
+                // var videoTracks = stream.getVideoTracks();
+                // console.log("%c Line:35 🌰 Using video device2: ", "color:red", videoTracks[0].label);
+                // document.getElementById('video1').srcObject = stream;
+                // // getVideoInputDevice()
+
+            const videoTrack = stream.getVideoTracks()[0];
+            const imageCapture = new ImageCapture(videoTrack);
+            console.log("%c Line:2 🍊 imageCapture", "color:#ffdd4d", videoTrack,imageCapture);
+
+            function captureFrame() {
+                imageCapture.grabFrame()
+                .then(function(imageBitmap) {
+                    console.log("%c Line:2 🍊 imageBitmap", "color:#ffdd4d", imageBitmap);
+                    // 将图像位图转换为canvas元素
+                    const canvas = document.createElement('canvas');
+                    canvas.width = imageBitmap.width;
+                    canvas.height = imageBitmap.height;
+                    const context = canvas.getContext('2d');
+                    context.drawImage(imageBitmap, 0, 0);
+                    document.body.appendChild(canvas); 
+
+                    // 保存帧图像
+                    // saveFrame(canvas);
+
+                    // 处理下一帧
+                    // requestAnimationFrame(captureFrame);
+                })
+                .catch(function(error) {
+                    console.error('2捕获帧图像失败：', error);
+                });
+            }
+            setTimeout(() => {
+                // 开始捕获帧图像
+                captureFrame();
+            }, 3000)
+            
+        }
+        function handleError(error) {
+            console.log('getUserMedia error: ' + error.name, error);
+        }
+    
+        var constraints = window.constraints = {
+            audio: false,
+            video: true
+        };
+        navigator.mediaDevices.getUserMedia(constraints).then(handleSuccess).catch(handleError);
+
+
+        // var constraints2 = window.constraints = {
+        //     audio: false,
+        //     video: {
+        //         width: { ideal: 800 },
+        //         height: { ideal: 800 },
+        //         aspectRatio: 1,
+        //         frameRate: {
+        //             ideal: 30,
+        //         },
+        //         facingMode: 'environment',
+        //     },
+        // };
+        // navigator.mediaDevices.getUserMedia(constraints2).then(handleSuccess2).catch(handleError);
+        
+        async function getVideoInputDevice() {
+            if (!navigator.mediaDevices.enumerateDevices) return []
+            try {
+                const devices = await navigator.mediaDevices.enumerateDevices()
+                console.log("%c Line:67 🍫 devices", "color:#ea7e5c", devices);
+                const cameras = devices.filter(v => v.kind === 'videoinput')
+                // print camera information
+                const camerasCapabilities = cameras.map(device => {
+                    console.log("%c Line:71 🍪 getCapabilities", "color:#93c0a4", device.getCapabilities);
+                    const capabilities = device.getCapabilities && device.getCapabilities()
+                    if (capabilities) {
+                        console.log("%c Line:72 🍡 capabilities", "color:#93c0a4", '-------------------------------');
+                        console.log(`device label:${device.label}`)
+                        console.log(`device id:${device.deviceId}`)
+                        console.log(`kind is:${device.kind}`)
+                        console.log('capabilities' + JSON.stringify(capabilities))
+                    }
+                    return capabilities
+                })
+                return [cameras, camerasCapabilities]
+            } catch (error) {
+                console.error('getVideoInputDevice', error)
+                return []
+            }
+        }
+    }, 3000)
+</script>
+</html>

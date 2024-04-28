@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>crypto-function</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/crypto-js.min.js"></script>
+</head>
+<body>
+    crypto-function
+    <br>
+    <script>
+        // generateUniqueId
+        function gui(functionBody) {
+            const hash = CryptoJS.SHA256(functionBody);
+            return hash.toString(CryptoJS.enc.Hex);
+        }
+
+        function test() {
+            console.log(123);
+        }
+
+        // test.prototype.key = gui(test.toString());
+        test.prototype.key = 'a7450731caf2b3d2e2a566f4940f6a931c9450c90acb3c79800a12ede46815a1';
+        // new Function('','return function() {alert(gui(test.toString()) !== test.prototype.key);debugger; return null; };')('')()
+        new Function('alert(gui(test.toString()) !== test.prototype.key);')()
+        console.log('qqq', gui(test.toString()) !== test.prototype.key);
+    </script>
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+    <title>Rust WebAssembly Example</title>
+    <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/image-capture@0.4.0/lib/imagecapture.min.js"></script>
+    <!-- <script type="module">
+        async function test() {
+            // const input = await fetch("./dist/lib_rust.wasm")
+            // console.log(123,input)
+            const response = await fetch("./hello_wasm.js");
+            console.log(123,response)
+            // const js = import("./hello_wasm.js");
+            // js.then((js) => {
+            //     console.log(123,js)
+            //     // js.greet("WebAssembly");
+            // });
+            // const wasmBytes = await response.arrayBuffer();
+            // const wasmModule = await WebAssembly.instantiate(wasmBytes);
+            // console.log(123,response)
+            // wasmModule.instance.exports.main()
+        }
+        test()
+    //   import init from "./dist/wasm.js";
+    //   async function run() {
+    //     const wasm = await init();
+    //     wasm.run();
+    //   }
+    //   run();
+    </script> -->
+    <style>
+      canvas {
+        width: 120px;
+      }
+    </style>
+  </head>
+  <body>
+    页面内容
+    <!-- <script>
+      function isFileUploadImpossible() {
+          var el = document.createElement("input");
+          el.setAttribute("type", "file");
+          return el.disabled;
+      }
+      console.log(isFileUploadImpossible())
+    </script>
+    <input type="file" accept="video/*" > -->
+    <!-- <input type="file" id="avatar" name="avatar" accept="image/png, image/jpeg" />
+    <input type="file" accept="image/*" mutiple="mutiple" capture="camera" /> -->
+    <script type="module" src="./index2.js"></script>
+    <!-- <script type="module" src="./index3.js"></script> -->
+  </body>
+</html>

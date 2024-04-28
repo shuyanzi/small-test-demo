@@ -1,0 +1,10 @@
+/Users/work/fe/camera-test/test-wasm/target/debug/deps/libwasmedge_http_req-0d94de2814aca11a.rmeta: /Users/fangjin/.cargo/registry/src/index.crates.io-6f17d22bba15001f/wasmedge_http_req-0.8.1/src/lib.rs /Users/fangjin/.cargo/registry/src/index.crates.io-6f17d22bba15001f/wasmedge_http_req-0.8.1/src/error.rs /Users/fangjin/.cargo/registry/src/index.crates.io-6f17d22bba15001f/wasmedge_http_req-0.8.1/src/request.rs /Users/fangjin/.cargo/registry/src/index.crates.io-6f17d22bba15001f/wasmedge_http_req-0.8.1/src/response.rs /Users/fangjin/.cargo/registry/src/index.crates.io-6f17d22bba15001f/wasmedge_http_req-0.8.1/src/uri.rs /Users/fangjin/.cargo/registry/src/index.crates.io-6f17d22bba15001f/wasmedge_http_req-0.8.1/src/chunked.rs
+
+/Users/work/fe/camera-test/test-wasm/target/debug/deps/wasmedge_http_req-0d94de2814aca11a.d: /Users/fangjin/.cargo/registry/src/index.crates.io-6f17d22bba15001f/wasmedge_http_req-0.8.1/src/lib.rs /Users/fangjin/.cargo/registry/src/index.crates.io-6f17d22bba15001f/wasmedge_http_req-0.8.1/src/error.rs /Users/fangjin/.cargo/registry/src/index.crates.io-6f17d22bba15001f/wasmedge_http_req-0.8.1/src/request.rs /Users/fangjin/.cargo/registry/src/index.crates.io-6f17d22bba15001f/wasmedge_http_req-0.8.1/src/response.rs /Users/fangjin/.cargo/registry/src/index.crates.io-6f17d22bba15001f/wasmedge_http_req-0.8.1/src/uri.rs /Users/fangjin/.cargo/registry/src/index.crates.io-6f17d22bba15001f/wasmedge_http_req-0.8.1/src/chunked.rs
+
+/Users/fangjin/.cargo/registry/src/index.crates.io-6f17d22bba15001f/wasmedge_http_req-0.8.1/src/lib.rs:
+/Users/fangjin/.cargo/registry/src/index.crates.io-6f17d22bba15001f/wasmedge_http_req-0.8.1/src/error.rs:
+/Users/fangjin/.cargo/registry/src/index.crates.io-6f17d22bba15001f/wasmedge_http_req-0.8.1/src/request.rs:
+/Users/fangjin/.cargo/registry/src/index.crates.io-6f17d22bba15001f/wasmedge_http_req-0.8.1/src/response.rs:
+/Users/fangjin/.cargo/registry/src/index.crates.io-6f17d22bba15001f/wasmedge_http_req-0.8.1/src/uri.rs:
+/Users/fangjin/.cargo/registry/src/index.crates.io-6f17d22bba15001f/wasmedge_http_req-0.8.1/src/chunked.rs:

@@ -1,0 +1,99 @@
+cargo:rerun-if-changed=build.rs
+cargo:rerun-if-env-changed=CARGO_FEATURE_EXPORTS
+cargo:rerun-if-env-changed=CARGO_FEATURE_BINDGEN
+cargo:rerun-if-env-changed=CARGO_FEATURE_UPDATE_BINDINGS
+cargo:rerun-if-env-changed=CARGO_FEATURE_DUMP_BYTECODE
+cargo:rerun-if-env-changed=CARGO_FEATURE_DUMP_GC
+cargo:rerun-if-env-changed=CARGO_FEATURE_DUMP_GC_FREE
+cargo:rerun-if-env-changed=CARGO_FEATURE_DUMP_FREE
+cargo:rerun-if-env-changed=CARGO_FEATURE_DUMP_LEAKS
+cargo:rerun-if-env-changed=CARGO_FEATURE_DUMP_MEM
+cargo:rerun-if-env-changed=CARGO_FEATURE_DUMP_OBJECTS
+cargo:rerun-if-env-changed=CARGO_FEATURE_DUMP_ATOMS
+cargo:rerun-if-env-changed=CARGO_FEATURE_DUMP_SHAPES
+cargo:rerun-if-env-changed=CARGO_FEATURE_DUMP_MODULE_RESOLVE
+cargo:rerun-if-env-changed=CARGO_FEATURE_DUMP_PROMISE
+cargo:rerun-if-env-changed=CARGO_FEATURE_DUMP_READ_OBJECT
+Applying patch patches/error_column_number.patch
+patching file cutils.c
+patching file cutils.h
+patching file quickjs-atom.h
+patching file quickjs-opcode.h
+patching file quickjs.c
+patching file quickjs.h
+patching file 'tests/test_line_column.js'
+1 out of 1 hunks ignored--saving rejects to 'tests/test_line_column.js.rej'
+patching file quickjs.c
+patching file quickjs.c
+Applying patch patches/get_function_proto.patch
+patching file quickjs.c
+patching file quickjs.h
+Applying patch patches/check_stack_overflow.patch
+patching file quickjs.c
+Applying patch patches/infinity_handling.patch
+patching file quickjs.c
+Applying patch patches/atomic_new_class_id.patch
+patching file quickjs.c
+Applying patch patches/dynamic_import_sync.patch
+patching file quickjs.c
+patching file quickjs.h
+TARGET = Some("x86_64-apple-darwin")
+OPT_LEVEL = Some("0")
+HOST = Some("x86_64-apple-darwin")
+cargo:rerun-if-env-changed=CC_x86_64-apple-darwin
+CC_x86_64-apple-darwin = None
+cargo:rerun-if-env-changed=CC_x86_64_apple_darwin
+CC_x86_64_apple_darwin = None
+cargo:rerun-if-env-changed=HOST_CC
+HOST_CC = None
+cargo:rerun-if-env-changed=CC
+CC = None
+cargo:rerun-if-env-changed=CC_ENABLE_DEBUG_OUTPUT
+cargo:rerun-if-env-changed=CRATE_CC_NO_DEFAULTS
+CRATE_CC_NO_DEFAULTS = None
+DEBUG = Some("true")
+cargo:rerun-if-env-changed=CFLAGS_x86_64-apple-darwin
+CFLAGS_x86_64-apple-darwin = None
+cargo:rerun-if-env-changed=CFLAGS_x86_64_apple_darwin
+CFLAGS_x86_64_apple_darwin = None
+cargo:rerun-if-env-changed=HOST_CFLAGS
+HOST_CFLAGS = None
+cargo:rerun-if-env-changed=CFLAGS
+CFLAGS = None
+cargo:rerun-if-env-changed=CC_x86_64-apple-darwin
+CC_x86_64-apple-darwin = None
+cargo:rerun-if-env-changed=CC_x86_64_apple_darwin
+CC_x86_64_apple_darwin = None
+cargo:rerun-if-env-changed=HOST_CC
+HOST_CC = None
+cargo:rerun-if-env-changed=CC
+CC = None
+cargo:rerun-if-env-changed=CC_ENABLE_DEBUG_OUTPUT
+cargo:rerun-if-env-changed=CRATE_CC_NO_DEFAULTS
+CRATE_CC_NO_DEFAULTS = None
+cargo:rerun-if-env-changed=CFLAGS_x86_64-apple-darwin
+CFLAGS_x86_64-apple-darwin = None
+cargo:rerun-if-env-changed=CFLAGS_x86_64_apple_darwin
+CFLAGS_x86_64_apple_darwin = None
+cargo:rerun-if-env-changed=HOST_CFLAGS
+HOST_CFLAGS = None
+cargo:rerun-if-env-changed=CFLAGS
+CFLAGS = None
+cargo:rerun-if-env-changed=AR_x86_64-apple-darwin
+AR_x86_64-apple-darwin = None
+cargo:rerun-if-env-changed=AR_x86_64_apple_darwin
+AR_x86_64_apple_darwin = None
+cargo:rerun-if-env-changed=HOST_AR
+HOST_AR = None
+cargo:rerun-if-env-changed=AR
+AR = None
+cargo:rerun-if-env-changed=ARFLAGS_x86_64-apple-darwin
+ARFLAGS_x86_64-apple-darwin = None
+cargo:rerun-if-env-changed=ARFLAGS_x86_64_apple_darwin
+ARFLAGS_x86_64_apple_darwin = None
+cargo:rerun-if-env-changed=HOST_ARFLAGS
+HOST_ARFLAGS = None
+cargo:rerun-if-env-changed=ARFLAGS
+ARFLAGS = None
+cargo:rustc-link-lib=static=quickjs
+cargo:rustc-link-search=native=/Users/work/fe/camera-test/test-wasm/target/debug/build/rquickjs-sys-4eedb6c9a2c092a0/out

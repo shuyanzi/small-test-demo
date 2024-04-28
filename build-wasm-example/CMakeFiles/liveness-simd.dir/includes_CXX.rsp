@@ -1,0 +1,1 @@
+-I"/usr/local/include/botan-3" -I"/Users/work/fe/guardian-cv-mobile-sdk/src/../include" -I"/Users/work/fe/guardian-cv-mobile-sdk/src" -isystem "/Users/work/fe/guardian-cv-mobile-sdk/dist/wasm/simd/include/ncnn"
