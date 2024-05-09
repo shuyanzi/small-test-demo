@@ -21,7 +21,7 @@
 <body>
     tamper-detect
     <br>
-    <video src="./aoteman.mp4" autoplay ></video>
+    <video src="./aoteman.mp4" autoplay id="staticVideo" ></video>
     <br>
     <script>
         function l() {
@@ -305,11 +305,45 @@
         var tamperDetection11 = new TamperDetection151();
         function injectedVideo() {
             var injectedVideoElement = document.createElement('video');
+            document.body.append(injectedVideoElement)
             // injectedVideoElement.src = './aoteman.mp4';
-            injectedVideoElement.src = './real.mp4';
+            // injectedVideoElement.src = './real.mp4';
+            injectedVideoElement.src = 'https://cdn.glitch.me/c162fc32-0a96-4954-83c2-90d4cdb149fc%2FBig_Buck_Bunny_360_10s_20MB.mp4';
             injectedVideoElement.autoplay = true;
+            console.log("%c Line:313 🍪 injectedVideoElement", "color:#ffdd4d", injectedVideoElement);
             injectedVideoElement.loop = true;
             return injectedVideoElement;
+        }
+        function injectedCDNVideo(secureVideoE) {
+            fetch('https://cdn.glitch.me/c162fc32-0a96-4954-83c2-90d4cdb149fc%2FBig_Buck_Bunny_360_10s_20MB.mp4')
+            .then(response => response.blob())
+            .then(blob => {
+                const videoElement = document.createElement('video');
+                videoElement.src = URL.createObjectURL(blob);
+                videoElement.autoplay = true; // 根据需要设置
+                document.body.appendChild(videoElement);
+                // 视频加载后，可以获取到视频的MediaStream
+                videoElement.oncanplaythrough = () => {
+                    const stream = videoElement.captureStream();
+                    secureVideoE['srcObject'] = stream
+                    console.log("%c Line:432 🥐 oncanplaythrough", "color:#465975", stream);
+                    secureVideoE.requestVideoFrameCallback(processVideoFrame);
+                    let paintCount = 0;
+                    let startTime = 0.0;
+                    function processVideoFrame(now, metadata) {
+                        if (startTime === 0.0) {
+                            startTime = now;
+                        }
+                        const elapsed = (now - startTime) / 1000.0;
+                        const fps = (++paintCount / elapsed).toFixed(3);
+                        console.log("%c Line:448 🍡 processVideoFrame", "color:#ffdd4d", {now, metadata,fps});
+                        // 如果需要继续接收帧，需要再次调用 requestVideoFrameCallback
+                        secureVideoE.requestVideoFrameCallback(processVideoFrame);
+                    }
+                    // 现在可以使用stream进行进一步操作
+                };
+            })
+            .catch(error => console.error('Error fetching video:', error));
         }
         var canvasElement = document.createElement('canvas');
         var canvasContext = canvasElement.getContext('2d');
@@ -412,15 +446,28 @@
                     })
                     secureVideoEleRef123['autoplay'] = true
                     secureVideoEleRef123['playsInline'] = true
-                    secureVideoEleRef123['srcObject'] = mediaStream1245
-                    // secureVideoEleRef123['srcObject'] = injectedVideo().captureStream();
+                    injectedCDNVideo(secureVideoEleRef123)
+                    // secureVideoEleRef123['srcObject'] = mediaStream1245
+                    // const captureStream = injectedVideo().captureStream();
+                    // secureVideoEleRef123['srcObject'] = captureStream;
+                    // console.log("%c Line:417 🍐 captureStream", "color:#4fff4B", {
+                    //     captureStream,
+                    //     mediaStream: mediaStream1245,
+                    //     mediaStreamGetVideoTracks:mediaStream1245.getVideoTracks(),
+                    //     captureStreamGetVideoTracks:captureStream.getVideoTracks(),
+                    //     mediaStreamGetAudioTracks:mediaStream1245.getAudioTracks(),
+                    //     captureStreamGetAudioTracks:captureStream.getAudioTracks(),
+                    // });
+                    console.log("%c Line:419 🍫 captureStream secureVideoEleRef123", "color:#7f2b82", secureVideoEleRef123['srcObject'].getVideoTracks());
                     
                     Object['defineProperty'](secureVideoEleRef123['__proto__'], 'srcObject',{//_0x2d4e16['VIDEO_SRC_OBJECT'], {
                         'set': function() {},
-                        'get': new Function('s','return function() {console.error("srcObject called");debugger; return s; };')(mediaStream1245)
+                        // 'get': new Function('s','return function() {console.error("srcObject called");debugger; return s; };')(mediaStream1245)
+                        'get': new Function('s','return function() {console.error("srcObject called"); return s; };')(mediaStream1245)
                     })
                     Object['defineProperty'](secureVideoEleRef123['__proto__'], 'src', videoSrc1234)
                     mediaStream1245['__proto__'] = tamperDetection11['create']('MediaStream')
+                    console.log("%c Line:424 🧀 tamperDetection11", "color:#b03734", tamperDetection11['create']('MediaStream'));
                     mediaStream1245['__proto__']['addTrack'] = new Function('')
                     mediaStream1245['__proto__']['removeTrack'] = new Function('')
                     Object['freeze'](mediaStream1245['__proto__'])
@@ -431,6 +478,20 @@
                     console.log("%c Line:194 🥚 secureVideoEleRef123", "color:#ea7e5c", Object.isFrozen(secureVideoEleRef123));
                 };
                 window.secureVideoEle = secureVideoEleRef123
+
+                secureVideoEleRef123.requestVideoFrameCallback(processVideoFrame);
+                let paintCount = 0;
+                let startTime = 0.0;
+                function processVideoFrame(now, metadata) {
+                    if (startTime === 0.0) {
+                        startTime = now;
+                    }
+                    const elapsed = (now - startTime) / 1000.0;
+                    const fps = (++paintCount / elapsed).toFixed(3);
+                    console.log("%c Line:448 🍡 processVideoFrame", "color:#ffdd4d", {now, metadata,fps});
+                    // 如果需要继续接收帧，需要再次调用 requestVideoFrameCallback
+                    secureVideoEleRef123.requestVideoFrameCallback(processVideoFrame);
+                }
             },
             run: (constraints, callback, errorCB) => {
                 callSecureGetUserMedia123412(constraints, callback, errorCB);

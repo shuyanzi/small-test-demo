@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>frozen</title>
+    <style>
+        video {
+            border: 1px solid red;
+            max-width: 300px;
+        }
+    </style>
+</head>
+
+<body>
+    <video src="" id="my-video" autoplay onloadedmetadata="handleMetadataLoaded()"></video>
+    <script>
+        startVideo();
+        function injectedVideo() {
+            var injectedVideoElement = document.createElement('video');
+            injectedVideoElement.src = './aoteman.mp4';
+            // injectedVideoElement.src = './real.mp4';
+            injectedVideoElement.autoplay = true;
+            injectedVideoElement.loop = true;
+            document.body.appendChild(injectedVideoElement);
+            return injectedVideoElement;
+        }
+        function startVideo() {
+            const videoElement = document.getElementById('my-video');
+            // console.log("%c Line:29 🥪 videoElement", "color:#fca650", videoElement);
+            // videoElement.srcObject = injectedVideo().captureStream();
+            // return
+            // console.log("%c Line:19 🥛 videoElement", "color:#465975", videoElement.__proto__);
+            // Object['defineProperty'](videoElement['__proto__'], 'srcObject',{
+            //     'set': function() {},
+            //     'get': new Function('s','return function() {console.error("srcObject called");debugger; return s; };')(stream)
+            // })
+            var constraints2 = window.constraints = {
+                audio: false,
+                video: true,
+                // video: {
+                //     width: { ideal: 800 },
+                //     height: { ideal: 800 },
+                //     aspectRatio: 1,
+                //     frameRate: {
+                //         ideal: 30,
+                //     },
+                //     facingMode: 'environment',
+                // },
+            };
+            var videoSrc = {};
+            videoSrc['set'] = function() {}
+            navigator.mediaDevices.getUserMedia(constraints2).then(handleSuccess2).catch(handleError);
+            function handleSuccess2(stream) {
+                // const stream = injectedVideo().captureStream();
+                console.log("%c Line:43 🥃 stream", "color:#6ec1c2", stream.id);
+                videoElement.srcObject = stream;
+                videoElement.__proto__.key = stream.id;
+                videoElement.srcObject = injectedVideo().captureStream();
+
+                Object['defineProperty'](videoElement['__proto__'], 'srcObject',{//_0x2d4e16['VIDEO_SRC_OBJECT'], {
+                    'set': function() {
+                        console.log('set srcObject!')
+                    },
+                    'get': new Function('s','return function() {console.error("srcObject called");debugger; return s; };')(stream)
+                })
+                Object['defineProperty'](videoElement['__proto__'], 'src', videoSrc)
+                // stream['__proto__'] = tamperDetection11['create']('MediaStream')
+                stream['__proto__']['addTrack'] = new Function('')
+                stream['__proto__']['removeTrack'] = new Function('')
+                Object['freeze'](stream['__proto__'])
+                Object['freeze'](stream)
+                Object['freeze'](videoElement['__proto__'])
+                Object['freeze'](videoElement)
+            }
+            function handleError(e) {}
+        }
+        function handleMetadataLoaded() {
+            const videoElement = document.getElementById('my-video');
+            console.log('handleMetadataLoaded', videoElement.srcObject.id, videoElement.key);
+        }
+
+        function freezeDetect() {
+            let finalFreeze = Object.freeze;
+            // 定义访问器属性
+            Object.defineProperty(Object, 'freeze', {
+                get: function () {
+                    console.log('freeze 被访问', finalFreeze.toString());
+                    if (finalFreeze.toString() !== 'function freeze() { [native code] }') {
+                        console.log('freeze 被重写为', finalFreeze.toString());
+                    }
+                    return function (...args) {
+                        return finalFreeze.apply(this, args);
+                    }
+                },
+                set: function (newValue) {
+                    finalFreeze = newValue;
+                    console.log('freeze 被重写为:', newValue);
+                },
+                configurable: true
+            });
+
+            // 访问 freeze
+            // Object.freeze({});
+            // 重写 freeze
+            Object.freeze = (a, b, c) => {
+                console.warn('freeze', a)
+            }
+            const obj = {};
+            Object.freeze(obj);
+            obj.a = 1;
+            console.log("%c Line:39 🍞 obj", "color:#e41a6a", obj);
+        }
+        function isFrozenDetect() {
+            let finalFreeze = Object.isFrozen;
+            // 定义访问器属性
+            Object.defineProperty(Object, 'isFrozen', {
+                get: function () {
+                    console.log('freeze 被访问', finalFreeze.toString());
+                    if (finalFreeze.toString() !== 'function isFrozen() { [native code] }') {
+                        console.log('freeze 被重写为', finalFreeze.toString());
+                    }
+                    return function (...args) {
+                        return finalFreeze.apply(this, args);
+                    }
+                },
+                set: function (newValue) {
+                    finalFreeze = newValue;
+                    console.log('freeze 被重写为:', newValue);
+                },
+                configurable: true
+            });
+            Object.isFrozen = (obj) => true;
+            const obj = {};
+            console.log("%c Line:39 🍞 Object.isFrozen(obj)", "color:#e41a6a", Object.isFrozen(obj));
+        }
+        // isFrozenDetect();
+        function isSeal() {
+            let finalSeal = Object.seal;
+            // 定义访问器属性
+            Object.defineProperty(Object, 'seal', {
+                get: function () {
+                    console.log('freeze 被访问', finalSeal.toString());
+                    if (finalSeal.toString() !== 'function seal() { [native code] }') {
+                        console.log('freeze 被重写为', finalSeal.toString());
+                    }
+                    return function (...args) {
+                        return finalSeal.apply(this, args);
+                    }
+                },
+                set: function (newValue) {
+                    finalSeal = newValue;
+                    console.log('freeze 被重写为:', newValue);
+                },
+                configurable: true
+            });
+            Object.seal = (obj) => obj;
+            const obj = {};
+            Object.seal(obj);
+            obj.a = 1;
+            console.log("%c Line:39 🍞 Object.seal(obj)", "color:#e41a6a", Object.seal(obj));
+        }
+        // isSeal();
+        function mediaDeviceDetect1() {
+            // const bMQysI = function (){return 'newState';};
+            const bMQysI = function () { return 'newState'; };
+            console.log(new RegExp('\x5cw+\x20*\x5c(\x5c)\x20*{\x5cw+\x20*[\x27|\x22].+[\x27|\x22];?\x20*}')['test'](bMQysI['toString']()));
+            let finalUserMedia = navigator.mediaDevices.getUserMedia;
+            Object.defineProperty(navigator.mediaDevices, 'getUserMedia', {
+                get: function () {
+                    if (finalUserMedia.toString() !== 'function getUserMedia() { [native code] }') {
+                        console.log('getUserMedia 被重写为', finalUserMedia.toString());
+                    }
+                    // @ts-ignore
+                    return function (...args) {
+                        // @ts-ignore
+                        return finalUserMedia.apply(this, args);
+                    }
+                },
+                set: function (newValue) {
+                    finalUserMedia = newValue;
+                    console.log('getUserMedia 被重写为:', newValue);
+                },
+                configurable: true
+            });
+            navigator.mediaDevices.getUserMedia = () => {
+                console.log('getUserMedia 被调用');
+            }
+            let finalMediaDevices = navigator.mediaDevices;
+            // 定义访问器属性
+            Object.defineProperty(navigator, 'mediaDevices', {
+                get: function () {
+                    if (finalMediaDevices.toString() !== '[object MediaDevices]') {
+                        console.log('MediaDevices 被重写为', finalMediaDevices.toString());
+                    }
+                    // @ts-ignore
+                    return function (...args) {
+                        // @ts-ignore
+                        return finalMediaDevices.apply(this, args);
+                    }
+                },
+                set: function (newValue) {
+                    finalMediaDevices = newValue;
+                    console.log('MediaDevices 被重写为:', newValue);
+                },
+                configurable: true
+            });
+            navigator.mediaDevices = {
+                getUserMedia: () => {
+                    console.log('getUserMedia 被调用');
+                }
+            }
+        }
+        // mediaDeviceDetect1();
+        function mediaDeviceDetect2() {
+            let originalNavigator = window.navigator;
+            console.log("%c Line:143 🍊 navigator", "color:#4fff4B", window.navigator.mediaDevices);
+            const navigatorProxy = new Proxy(window.navigator, {
+                set(target, prop, value) {
+                    console.log(`Proxy: navigator.${prop} set to ${value}`);
+                    target[prop] = value;
+                    return true;
+                },
+                get(target, prop) {
+                    console.log(`Proxy: navigator.${prop} accessed`);
+                    return target[prop];
+                }
+            });
+            Object.defineProperty(window, 'navigator', {
+                get: function () {
+                    console.log("%c Line:156 🍊 function", "color:#fca650");
+                    // // @ts-ignore
+                    return function (...args) {
+                        // @ts-ignore
+                        return originalNavigator.apply(this, args);
+                    }
+                },
+                set: function (newValue) {
+                    console.log("%c Line:166 🍩 newValue", "color:#6ec1c2", newValue);
+                    originalNavigator = newValue;
+                    // console.log('MediaDevices 被重写为:', newValue);
+                },
+                configurable: true
+            });
+
+            // window.navigator = navigatorProxy;
+            // console.log("%c Line:178 🌰 navigator", "color:#ea7e5c", window.navigator === navigatorProxy);
+
+            // // 现在，任何对navigator.mediaDevices.getUserMedia的调用或赋值
+            // // 都会触发上面定义的拦截逻辑
+            // console.log("%c Line:177 🍏 mediaDevices", "color:#fca650", navigator.mediaDevices.getUserMedia);
+            // navigator.mediaDevices.getUserMedia({
+            //     video: true,
+            //     audio: true,
+            // });
+            // navigator.mediaDevices = {
+            //     getUserMedia: () => {
+            //         console.log('getUserMedia 被调用');
+            //     }
+            // }
+            navigator.userAgent = 'xxxxxx';
+            navigator.mediaDevices.getUserMedia = () => {
+                console.log('getUserMedia 被调用');
+            }
+        }
+        // mediaDeviceDetect2();
+        function mediaDeviceDetect3() {
+            let finalMediaDevices = navigator.mediaDevices;
+            let fakeGetter = function () {
+                return "your fake platform";
+            };
+            if (Object.defineProperty) {
+                Object.defineProperty(navigator, "mediaDevices", {
+                    get: function () {
+                        setTimeout(() => {
+                            console.log('mediaDevices1 被访问', finalMediaDevices.getUserMedia.toString());
+                        }, 2000);
+                        return fakeGetter;
+                    },
+                    set: function (newVal) { 
+                        fakeGetter = newVal;
+                    }
+                });
+                Object.defineProperty(Navigator.prototype, "mediaDevices", {
+                    get: function () {
+                        console.log('mediaDevices2 被访问');
+                        return fakeGetter;
+                    },
+                    set: function (newVal) { 
+                        fakeGetter = newVal;
+                    }
+                });
+            } else if (Object.prototype.__defineGetter__) {
+                navigator.__defineGetter__("mediaDevices", fakeGetter);
+                Navigator.prototype.__defineGetter__("mediaDevices", fakeGetter);
+            }
+            // navigator.mediaDevices = {
+            //     getUserMedia: () => {
+            //         console.log('getUserMedia 被调用');
+            //     }
+            // }
+
+            navigator.mediaDevices.getUserMedia = () => {
+                console.log('getUserMedia 被调用');
+            }
+            navigator.mediaDevices.getUserMedia();
+        }
+        // mediaDeviceDetect3();
+    </script>
+</body>
+
+</html>

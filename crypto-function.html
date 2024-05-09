@@ -11,21 +11,87 @@
     crypto-function
     <br>
     <script>
+const objtest={
+foo:function(){console.log("foo called")},
+bar:function(){
+console.log("bar called")
+},
+baz:"test string"
+};
+objtest.foo.prototype.key = '178d671109446ff1a8d41bcc08c4535a24f14821e9dc8b87a4e06b0d04bb3709'
+objtest.bar.prototype.key = '20a8c65cadb34233e021115707e76d05e1d62e446cfe5f3668c40fb9b79ec20c'
         // generateUniqueId
         function gui(functionBody) {
             const hash = CryptoJS.SHA256(functionBody);
             return hash.toString(CryptoJS.enc.Hex);
         }
+        console.log("%c Line:29 🍖 console", "color:#b03734", console);
+        console.log(gui('()=>{const e=b;document[e(504)+e(481)](e(490),function(n){const t=e;n[t(498)]===123||(n.code,t(482))}),document[e(504)+e(481)]("contextmenu",function(n){const t=e;n[t(501)+t(503)]()})}'))
+        // // 这两行是在代码编译时，给函数添加一个key属性，这个key属性是函数的hash值
+        // obj.foo.prototype.key = gui(obj.foo.toString());
+        // obj.bar.prototype.key = gui(obj.bar.toString());
 
-        function test() {
-            console.log(123);
-        }
+        const handler = {
+            get(target, prop, receiver) {
+                const value = Reflect.get(...arguments);
+                if (typeof value === 'function') {
+                    return function(...args) {
+                        if (value.prototype.key !== gui(value.toString().replace(/\n/g, ''))) {
+                            console.error('Function was modified');
+                        }
+                        return value.apply(this, args);
+                    }
+                }
+                return value;
+            }
+        };
+        const proxy = new Proxy(objtest, handler);
+        proxy.foo();
+        proxy.bar(1, 2);
 
-        // test.prototype.key = gui(test.toString());
-        test.prototype.key = 'a7450731caf2b3d2e2a566f4940f6a931c9450c90acb3c79800a12ede46815a1';
-        // new Function('','return function() {alert(gui(test.toString()) !== test.prototype.key);debugger; return null; };')('')()
-        new Function('alert(gui(test.toString()) !== test.prototype.key);')()
-        console.log('qqq', gui(test.toString()) !== test.prototype.key);
+
+        // // function test(){console.log(123)}
+        // const utilts = {
+        //     test: function() {
+        //         console.log(123);
+        //     },
+        //     test2: function() {
+        //         console.log('test234');
+        //     },
+        //     aa: 'xsxs'
+        // };
+
+        // const originalTest = utilts.test;
+        // Object.defineProperty(utilts, 'test', {
+        //     get: function() {
+        //         return function() {
+        //             console.log('test method was called', originalTest.prototype.key, utilts.test, gui(utilts.test.toString()));
+        //             return originalTest.apply(utilts, arguments);
+        //         };
+        //     }
+        // });
+        // const originalTest2 = utilts.test2;
+        // Object.defineProperty(utilts, 'test2', {
+        //     get: function() {
+        //         return function() {
+        //             console.log('test2 method was called',originalTest2.prototype.key, utilts.test2, gui(utilts.test2.toString()));
+        //             return originalTest2.apply(utilts, arguments);
+        //         };
+        //     }
+        // });
+
+        // setTimeout(() => {
+        //     utilts.test();
+        //     utilts.test2();
+        //     console.log("%c Line:46 🌮 utilts", "color:#fca650", utilts);
+        // }, 1000)
+        // // // test.prototype.key = gui(test.toString());
+        // originalTest.prototype.key = utilts.test.prototype.key = '111837287bc56f42889072c648597d9ac9c6b6fbfa2fc4c8c0106fda81b481c48';
+        // originalTest2.prototype.key = utilts.test2.prototype.key = '211837287bc56f42889072c648597d9ac9c6b6fbfa2fc4c8c0106fda81b481c48';
+        // // new Function('','return function() {alert(gui(test.toString()) !== test.prototype.key);debugger; return null; };')('')()
+        // new Function('alert(gui(utilts.test.toString()) !== utilts.test.prototype.key);')()
+        // console.log('qqq', utilts.test.toString(),gui(utilts.test.toString()));
+        // console.log('qqq', gui(test.toString()) !== test.prototype.key);
     </script>
 </body>
 </html>
