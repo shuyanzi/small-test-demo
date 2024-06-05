@@ -6,5 +6,5 @@ CXX_DEFINES = -DEMSCRIPTEN_HAS_UNBOUND_TYPE_NAMES=0
 
 CXX_INCLUDES = @CMakeFiles/liveness-basic.dir/includes_CXX.rsp
 
-CXX_FLAGS =  -fexceptions -sEXPORTED_FUNCTIONS=['_acv_init','_acv_detect','_acv_get_config','_acv_live_detect','_acv_reset','_free','_malloc']     -sDEFAULT_LIBRARY_FUNCS_TO_INCLUDE=$stringToNewUTF8     -sALLOW_MEMORY_GROWTH=1     --preload-file /Users/work/fe/guardian-cv-mobile-sdk/src/wasm/liveness/assets@.     -DLIVENESS_SERVICE_VERSION=1.2.2.2      -fexceptions -DACV_DEBUG -O3 -DNDEBUG -fPIE -fno-rtti -fno-exceptions
+CXX_FLAGS =  -sEXPORTED_FUNCTIONS=['_acv_init','_acv_detect','_acv_get_config','_acv_live_detect','_acv_detect_init','_acv_reset','_free','_malloc']     -sDEFAULT_LIBRARY_FUNCS_TO_INCLUDE=$stringToNewUTF8     -sALLOW_MEMORY_GROWTH=1     --preload-file /Users/work/fe/guardian-cv-mobile-sdk/src/wasm/liveness/assets@.     -DLIVENESS_SERVICE_VERSION=1.2.2.2      -DACV_DEBUG -O3 -DNDEBUG -fPIE -fno-rtti -fno-exceptions
 

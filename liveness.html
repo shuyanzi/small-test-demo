@@ -21,6 +21,9 @@
 <body>
     <div>
         <h1>ncnn webassembly liveness</h1>
+        bash
+        <br>
+        sh platforms/wasm/build_sdk.sh liveness && rm -r /Users/work/fe/small-test-demo/build-wasm-example && mv build-wasm-example /Users/work/fe/small-test-demo
         <div id="config" style="height:48px"> </div>
         <div id="liveness-stage" style="height:48px"> </div>
         <div id="error-code" style="height:48px"> </div>
@@ -126,6 +129,10 @@
                 fetch(livenesswasm)
                     .then(response => response.arrayBuffer())
                     .then(buffer => {
+                        setTimeout(() => {
+                            console.log({buffer}, window._acv_detect_init)
+                            window._acv_detect_init()
+                        }, 1000)
                         Module.wasmBinary = buffer;
                         var script = document.createElement('script');
                         script.src = livenessjs;
@@ -247,7 +254,8 @@
             resetBtn.addEventListener('click', function () {
                 _acv_reset();
             });
-            capture();
+            // capture();
+            
         });
 
         function test() {
@@ -319,6 +327,7 @@
             // var output_ptr = _acv_live_detect(dst, canvas.width, canvas.height, canvas.toDataURL('image/jpeg'));
             if (output_ptr != null) {
                 var output = UTF8ToString(output_ptr)
+                console.log({output});
                 _free(output_ptr);
                 hint.innerHTML = output;
                 try {

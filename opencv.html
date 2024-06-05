@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <title>OpenCV.js Brightness Detection (Base64)</title>
+    <script src="https://docs.opencv.org/4.5.5/opencv.js" type="text/javascript"></script>
+</head>
+
+<body>
+    <div>
+        <h2>Image Brightness Detection (Base64)</h2>
+        <input type="file" id="fileInput" />
+        <canvas id="outputCanvas"></canvas>
+        <p id="brightnessValue"></p>
+    </div>
+    <script type="text/javascript">
+        function onOpenCvReady(bb) {
+            const base64Data = bb.replace(/^data:image\/(png|jpeg|bmp);base64,/, '');
+            const imageData = cv.imdecode(cv.Base64.fromString(base64Data));
+            const brightness = calculateBrightness(imageData);
+            console.log('brightness', brightness);
+            // document.getElementById('brightnessValue').textContent = `Average brightness: ${brightness}`;
+            cv.imshow('outputCanvas', imageData);
+            imageData.delete();
+        }
+
+        function calculateBrightness(mat) {
+            const total = mat.rows * mat.cols * mat.channels();
+            const data = new cv.matVector();
+            cv.split(mat, data);
+            let sum = 0;
+            for (let i = 0; i < data.size(); ++i) {
+                const channel = data.get(i);
+                const channelSum = cv.sum(channel);
+                sum += channelSum.val[0];
+                channel.delete();
+            }
+            data.delete();
+            return sum / total;
+        }
+    </script>
+</body>
+
+</html>

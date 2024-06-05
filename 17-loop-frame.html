@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Camera Stream with Duplicate Frame Detection</title>
+  <style>
+    #status {
+      font-weight: bold;
+      font-size: 1.2em;
+    }
+    video {
+      width: 600px;
+    }
+    canvas, img {
+      width:80vw;
+    }
+  </style>
+</head>
+<body>
+  <video id="video" autoplay></video>
+  <div id="status">Loading...</div>
+  <!--
+    现象：
+    1、分辨率1920*1080时
+    生成canvas的图不压缩，真实摄像头和OBS都 检测不到 重复帧；
+    图片压缩成600*600，真实摄像头 检测不到，OBS检测重复帧且重复帧是上一帧
+    2、分辨率是600时（生成canvas的图不压缩）
+    真实摄像头 检测不到
+    OBS检测重复帧且重复帧是上一帧
+  -->
+
+  <script>
+    const video = document.getElementById('video');
+    const status = document.getElementById('status');
+
+    // SHA-256 hash function
+    function sha256(data) {
+      const msgUint8 = new TextEncoder().encode(data);
+      return crypto.subtle.digest('SHA-256', msgUint8).then(hashBuffer => {
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        return hashHex;
+      });
+    }
+    function sha256Buffer(buffer) {
+      console.log("%c Line:34 🥛 buffer", "color:#93c0a4", buffer);
+      return crypto.subtle.digest('SHA-256', buffer).then(hashBuffer => {
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        return hashHex;
+      });
+    }
+
+    function initSize(canvas, video) {
+      const ctx = canvas.getContext('2d');
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      ctx.drawImage(video, 0, 0);
+
+    }
+    function cropSize(canvas, video) {
+      const ctx = canvas.getContext('2d');
+      canvas.width = 400
+      canvas.height = 400
+      ctx.drawImage(video, 
+        420,0,
+        1080,1080,
+        0,0,
+        400,400
+      )
+    }
+    function cropInitRateSize(canvas, video) {
+      const ctx = canvas.getContext('2d');
+      canvas.width = 1080
+      canvas.height = 1080
+      ctx.drawImage(video, 
+        420,0,
+        1080,1080,
+        0,0,
+        1080,1080
+      )
+    }
+
+    navigator.mediaDevices.enumerateDevices()
+      .then(devices => {
+        const videoSources = devices.filter(device => device.kind === 'videoinput');
+        const options = videoSources.map(source => `<option value="${source.deviceId}">${source.label}</option>`);
+
+        const select = `<select id="videoSource">${options.join('')}</select>`;
+        document.body.insertAdjacentHTML('beforeend', select);
+
+        const videoSource = document.getElementById('videoSource');
+        videoSource.addEventListener('change', () => {
+          const selectedDeviceId = videoSource.value;
+          const constraints = {
+            video: {
+              width: {
+                exact: 1600
+              },
+              height: {
+                exact: 1200
+              },
+              deviceId: selectedDeviceId
+              // deviceId: '8faeb32dcc73d31e6a9d4f89264a39be23acf65d7dbb7a038e42445cdbdae453'
+            }
+          };
+          console.log("%c Line:57 🥑 constraints", "color:#93c0a4", constraints);
+
+          navigator.mediaDevices.getUserMedia(constraints)
+            .then(stream => {
+              video.srcObject = stream;
+
+              const frames = new Map();
+              let isDetected = false;
+              let framesInfo = []
+              let frameCount = -1
+              const detectDuplicateFrames = async (now, metadata) => {
+                frameCount++
+                // if (isDetected) return;
+                const canvas = document.createElement('canvas');
+                // initSize(canvas,video)
+                cropSize(canvas,video)
+
+
+                const initCanvas = document.createElement('canvas');
+                initSize(initCanvas,video)
+                // cropInitRateSize(canvas,video)
+                
+                const currentFrame = canvas.toDataURL();
+                const hash = await sha256(currentFrame);
+                // const currentFrame = canvas.toDataURL('image/jpeg');
+                // console.log("%c Line:84 🍢 currentFrame", "color:#465975", canvas.toDataURL('image/jpeg'));
+                // const imageData = ctx.getImageData(
+                //   0,
+                //   0,
+                //   canvas.width,
+                //   canvas.height
+                // )
+                // const data = imageData.data.buffer;
+                // const hash = await sha256Buffer(data);
+
+                if (frames.has(hash)) {
+                  console.log("%c Line:86 🥚 hash", "color:#ffdd4d", {hash, index: framesInfo.indexOf(hash), len: framesInfo.length,framesInfo});
+                  // console.log("%c Line:69 🌮 hash", "color:#ed9ec7", frames,hash,currentFrame);
+                  isDetected = true;
+                  status.textContent = '检测到重复帧';
+                  status.style.color = 'red';
+
+                  for (const [frameHash, frameData] of frames) {
+                    if (frameHash === hash) {
+                      const img = new Image();
+                      img.src = frameData.currentFrame;
+                      document.body.appendChild(img);
+                      const hashLast = await sha256(frameData.initImg);
+                      const img2 = new Image();
+                      img2.src = frameData.initImg;
+                      console.log("%c Line:167 🍪 new hashLast", "color:#33a5ff", {hashLast});
+                      document.body.appendChild(img2);
+                      break;
+                    }
+                  }
+
+                  const img = new Image();
+                  img.src = currentFrame;
+                  document.body.appendChild(img);
+
+                  const nowFull = initCanvas.toDataURL('image/jpeg')
+                  const hashNow = await sha256(nowFull);
+                  const img2 = new Image();
+                  img2.src = nowFull;
+                  console.log("%c Line:167 🍪 new hashNow", "color:#33a5ff", {hashNow});
+                  document.body.appendChild(img2);
+                  // img.onload = () => currCtx.drawImage(img, 0, 0);
+                } else {
+                  status.textContent = '没检测到重复帧';
+                  status.style.color = 'green';
+                  frames.set(hash, {currentFrame, initImg: initCanvas.toDataURL('image/jpeg')});
+                  video.requestVideoFrameCallback(detectDuplicateFrames);
+                }
+                framesInfo.push(hash)
+              };
+
+              video.requestVideoFrameCallback(detectDuplicateFrames);
+            })
+            .catch(err => console.error('Error accessing camera:', err));
+        });
+
+        videoSource.value = videoSources[0].deviceId;
+        videoSource.dispatchEvent(new Event('change'));
+      })
+      .catch(err => console.error('Error enumerating devices:', err));
+  </script>
+</body>
+</html>

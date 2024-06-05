@@ -26,7 +26,7 @@ objtest.bar.prototype.key = '20a8c65cadb34233e021115707e76d05e1d62e446cfe5f3668c
             return hash.toString(CryptoJS.enc.Hex);
         }
         console.log("%c Line:29 🍖 console", "color:#b03734", console);
-        console.log(gui('()=>{const e=b;document[e(504)+e(481)](e(490),function(n){const t=e;n[t(498)]===123||(n.code,t(482))}),document[e(504)+e(481)]("contextmenu",function(n){const t=e;n[t(501)+t(503)]()})}'))
+        console.log(gui(`({hardwareOnly:t=![],enableWebgl:x=![],enableScreen:r=!![],debug:e=![]}={})=>{const a=i,{cookieEnabled:c,deviceMemory:n,doNotTrack:s,hardwareConcurrency:f,language:d,languages:o,maxTouchPoints:_,platform:l,userAgent:T,vendor:D}=window[a(556)],{width:m,height:p,colorDepth:S,pixelDepth:A}=r?window[a(552)]:{},N=new Date()["getTimezon"+a(454)](),O=Intl[a(469)+"rmat"]()[a(487)+a(501)]()[a(514)],w=a(453)+"rt"in window,v=window["devicePixelRatio"],y=B(e),I=x?U(e):void 0,R=x?V():void 0,P=t?JSON[a(475)]({canvas:y,colorDepth:S,deviceMemory:n,devicePixelRatio:v,hardwareConcurrency:f,height:p,maxTouchPoints:_,pixelDepth:A,platform:l,touchSupport:w,webgl:I,webglInfo:R,width:m}):JSON[a(475)]({canvas:y,colorDepth:S,cookieEnabled:c,deviceMemory:n,devicePixelRatio:v,doNotTrack:s,hardwareConcurrency:f,height:p,language:d,languages:o,maxTouchPoints:_,pixelDepth:A,platform:l,timezone:O,timezoneOffset:N,touchSupport:w,userAgent:T,vendor:D,webgl:I,webglInfo:R,width:m}),E=JSON[a(475)](P,null,4);return e&&console[a(452)](a(502)+a(445),E),h(E)}`))
         // // 这两行是在代码编译时，给函数添加一个key属性，这个key属性是函数的hash值
         // obj.foo.prototype.key = gui(obj.foo.toString());
         // obj.bar.prototype.key = gui(obj.bar.toString());

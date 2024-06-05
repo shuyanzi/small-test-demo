@@ -306,13 +306,26 @@
         function injectedVideo() {
             var injectedVideoElement = document.createElement('video');
             document.body.append(injectedVideoElement)
-            // injectedVideoElement.src = './aoteman.mp4';
+            injectedVideoElement.src = './aoteman.mp4';
             // injectedVideoElement.src = './real.mp4';
-            injectedVideoElement.src = 'https://cdn.glitch.me/c162fc32-0a96-4954-83c2-90d4cdb149fc%2FBig_Buck_Bunny_360_10s_20MB.mp4';
+            // injectedVideoElement.src = 'https://cdn.glitch.me/c162fc32-0a96-4954-83c2-90d4cdb149fc%2FBig_Buck_Bunny_360_10s_20MB.mp4';
             injectedVideoElement.autoplay = true;
             console.log("%c Line:313 🍪 injectedVideoElement", "color:#ffdd4d", injectedVideoElement);
             injectedVideoElement.loop = true;
             return injectedVideoElement;
+        }
+        function injectedCDNVideo2(secureVideoE) {
+            fetch('https://cdn.glitch.me/c162fc32-0a96-4954-83c2-90d4cdb149fc%2FBig_Buck_Bunny_360_10s_20MB.mp4')
+            .then(response => response.blob())
+            .then(blob => {
+                const videoElement = document.getElementById("liveness-video")
+                console.log("%c Line:322 🥟 videoElement", "color:#ed9ec7", videoElement);
+                // const videoElement = document.createElement('video');
+                videoElement.src = URL.createObjectURL(blob);
+                videoElement.autoplay = true;
+                // document.body.appendChild(videoElement);
+            })
+            .catch(error => console.error('Error fetching video:', error));
         }
         function injectedCDNVideo(secureVideoE) {
             fetch('https://cdn.glitch.me/c162fc32-0a96-4954-83c2-90d4cdb149fc%2FBig_Buck_Bunny_360_10s_20MB.mp4')
@@ -370,21 +383,18 @@
             // var hash = spark.end();
 
             // 计算 SHA-256 散列
-            var dataString = '';
-            for (var i = 0; i < data.length; i++) {
-                dataString += String.fromCharCode(data[i]);
-            }
-            var hash = CryptoJS.SHA256(dataString).toString();
+            var hash = CryptoJS.SHA256(data.toString()).toString();
+            console.log("%c Line:387 🥛 CryptoJS.SHA256(data)", "color:#465975", hash);
 
             if (md5list.includes(hash)) {
                 console.log("MD5 散列存在循环:", hash, md5list.indexOf(hash));
                 console.log("MD5 散列存在循环:", { imageData, datalist, num });
             }
             num++
-            datalist.push(imageData)
             md5list.push(hash)
-            // console.log("%c Line:313 🥝 imageData", "color:#3f7cff", imageData);
-            requestAnimationFrame(renderFrame);
+            console.log("%c Line:394 🍤 datalist", "color:#6ec1c2", md5list);
+            // requestAnimationFrame(renderFrame);
+            secureVideoEleRef123.requestVideoFrameCallback(renderFrame);
         }
         var bollean1231234 = false, isTamperingDetected = tamperDetection11['tamperingDetected']();
         function generateVideoEle11112(documentEle1, HTMLDocumentStr111, createElementMethod111, videoTagStr1) {
@@ -428,6 +438,7 @@
                 var secureVideoEleRef123 = secureMethods.secureCreateElement('video');
                 window.secureVideoEleRef123 = secureVideoEleRef123
                 document.body.append(secureVideoEleRef123)
+                secureVideoEleRef123.requestVideoFrameCallback(renderFrame);
                 console.log("%c Line:165 🌶 document", "color:#7f2b82", document);
                 // secureVideoEleRef123['__proto__'] = this['securePrototypes']['create'](F2FConstants1234['VIDEO_CLASS']);
                 secureVideoEleRef123['__proto__'] = tamperDetection11['create']('HTMLVideoElement');
@@ -442,11 +453,12 @@
                         null !== secureVideoEleRef123 && null !== secureVideoEleRef123['srcObject'] && secureVideoEleRef123['play']();
                         // 开始渲染帧
                         console.log("%c Line:358 🍕 开始渲染帧", "color:#b03734");
-                        renderFrame();
+                        // renderFrame();
                     })
                     secureVideoEleRef123['autoplay'] = true
                     secureVideoEleRef123['playsInline'] = true
-                    injectedCDNVideo(secureVideoEleRef123)
+                    // injectedCDNVideo(secureVideoEleRef123)
+                    injectedVideo(secureVideoEleRef123)
                     // secureVideoEleRef123['srcObject'] = mediaStream1245
                     // const captureStream = injectedVideo().captureStream();
                     // secureVideoEleRef123['srcObject'] = captureStream;

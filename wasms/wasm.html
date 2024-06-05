@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WASM</title>
+</head>
+
+<body>
+    WASM
+    <script>
+        fetch("./out/test.wasm")
+            .then((response) => response.arrayBuffer())
+            .then((bytes) => {
+                console.log('123456 bytes', bytes, WebAssembly.instantiate(bytes))
+                return WebAssembly.instantiate(bytes)
+            })
+            .then((result) => {
+                // console.log('123456 results', results)
+                // console.log('123456 results', results.instance.exports.get_a())
+                // // 在这里添加你的代码
+                const instance = result.instance;
+                const memory = instance.exports.memory;
+                const getA = instance.exports.get_a;
+
+                // Get the address of the string 'a'
+                const address = getA();
+                console.log('memory.buffer:', memory.buffer, address);
+                const bb = new Uint8Array(memory.buffer);
+                console.log({bb})
+
+                // Find the length of the string by looking for the null terminator
+                let length = 0;
+                while (bb[address + length] !== 0) {
+                    length++;
+                    console.log(length, bb[address + length])
+                }
+
+                // Create a Uint8Array view of the WASM memory
+                const bytesArray = new Uint8Array(memory.buffer, address, length); // 'test haha' is 9 bytes long
+
+                // Convert the bytes to a string
+                const decoder = new TextDecoder('utf8');
+                const aString = decoder.decode(bytesArray);
+
+                console.log('Exported string a:', result, length, aString); // Output: 'test haha'
+            });
+        // fetch("./table-new-1.wasm")
+        //     .then((response) => response.arrayBuffer())
+        //     .then((bytes) => {
+        //         console.log('123456 bytes', bytes, WebAssembly.instantiate(bytes))
+        //         return WebAssembly.instantiate(bytes)
+        //     })
+        //     .then((results) => {
+        //         // console.log('123456 results', results)
+        //         console.log('123456 add', results, results.instance.exports.add(1, 2))
+        //         console.log('123456 a', results.instance.exports.a, results.instance.exports.a())
+        //         console.log('123456 table 1', results.instance.exports.tbl, results.instance.exports.tbl.get(0)())
+        //         console.log('123456 table 2', results.instance.exports.tbl, results.instance.exports.tbl.get(1)())
+        //         // 在这里添加你的代码
+        //     });
+
+    </script>
+</body>
+
+</html>

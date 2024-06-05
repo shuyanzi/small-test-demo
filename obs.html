@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://docs.opencv.org/4.9.0/opencv.js" type="text/javascript"></script>
+    <script src="https://unpkg.com/vconsole@latest/dist/vconsole.min.js"></script>
+<script>
+  // VConsole 默认会挂载到 `window.VConsole` 上
+  var vConsole = new window.VConsole();
+</script>
+    <title>OBS</title>
+    <style>
+        /* video,
+        canvas {
+            width: 300px;
+        } */
+        .wrap{
+            width: 346px;
+            height: 252px;
+            position: relative;
+            overflow: hidden;
+        }
+        .wrap video {
+            object-fit: fill;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            min-width: 100%;
+            min-height: 100%;
+            transform: translate(-50%, -50%);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrap">
+        <video id="video-demo" autoplay playsinline width="347" height="347"></video>
+    </div>
+    <script>
+        fetch("./wasms/table.wasm")
+            .then((response) => response.arrayBuffer())
+            .then((bytes) => {
+                console.log('123456 bytes', bytes, WebAssembly.instantiate(bytes))
+                return WebAssembly.instantiate(bytes)
+            })
+            .then((results) => {
+                console.log('123456 results', results, results.instance.exports.add(1, 2))
+                // 在这里添加你的代码
+            });
+        // function onOpenCvReady(data) {
+        //     // const base64Data = bb.replace(/^data:image\/(png|jpeg|bmp);base64,/, '');
+        //     // const imageData = cv.imdecode(cv.Base64.fromString(base64Data));
+        //     const mat = new cv.matFromArray(640, 640, cv.CV_8UC4, data);
+        //     console.log('mat11', mat);
+        //     const brightness = calculateBrightness(mat);
+        //     console.log('brightness', brightness);
+        //     // document.getElementById('brightnessValue').textContent = `Average brightness: ${brightness}`;
+        //     cv.imshow('outputCanvas', mat);
+        //     mat.delete();
+        // }
+
+        // function calculateBrightness(mat) {
+        //     const total = mat.rows * mat.cols * mat.channels();
+        //     const channels = [];
+        //     for (let i = 0; i < mat.channels(); i++) {
+        //         channels.push(new cv.Mat());
+        //     }
+        //     cv.split(mat, channels);
+        //     let sum = 0;
+        //     for (let i = 0; i < channels.length; ++i) {
+        //         const channelSum = cv.sum(channels[i]);
+        //         sum += channelSum.val[0];
+        //         channels[i].delete();
+        //     }
+        //     return sum / total;
+        // }
+
+
+        var constraints = window.constraints = {
+            audio: false,
+            video: true,
+            video: {
+                width: { ideal: 1920 },
+                height: { ideal: 1920 },
+                aspectRatio: 1,
+                frameRate: {
+                    ideal: 30,
+                },
+                facingMode: 'environment',
+                deviceId: '8D8DDC2CF7E4894FB916C1210B01827BB76422C4',
+                // exact: "environment"
+            },
+        };
+        navigator.mediaDevices.getUserMedia(constraints).then(handleSuccess).catch(handleError);
+
+
+        function handleError(error) {
+            console.log('getUserMedia error: ' + error.name, error);
+        }
+        let num = 0
+        const videoEle = document.getElementById('video-demo')
+        function dw() {
+            num++
+            if (num > 20) {
+                return
+            }
+            const canvas = document.createElement('canvas');
+            canvas.width = 640;
+            canvas.height = 640;
+            const context = canvas.getContext('2d', {
+                alpha: false,
+                willReadFrequently: true,
+            });
+            context.drawImage(videoEle, 0, 0, 640, 640, 0, 0, 640, 640);
+            document.body.appendChild(canvas);
+
+            const imageData = context.getImageData(
+                20,
+                20,
+                640, 640
+            )
+            const data = imageData.data
+            // onOpenCvReady(data)
+            // downloadCanvasImage(canvas)
+            // console.log("%c Line:55 🍎 data", "color:#fca650", data, canvas.toDataURL());
+            videoEle.requestVideoFrameCallback(() => {
+                dw()
+            })
+        }
+        async function handleSuccess(stream) {
+            const videoTrack = stream.getVideoTracks()[0]
+            // 获取实际的轨道设置
+            const settings = videoTrack.getSettings()
+            console.log({settings})
+            navigator.mediaDevices
+                .enumerateDevices()
+                .then((devices) => {
+                    devices.forEach((device) => {
+                        console.log(`${device.kind}: ${device.label} id = ${device.deviceId}`);
+                    });
+                })
+                .catch((err) => {
+                console.error(`${err.name}: ${err.message}`);
+                });
+            videoEle.srcObject = stream
+            videoEle.addEventListener('canplay', () => {
+                dw()
+            })
+        }
+
+
+        function downloadCanvasImage(canvas) {
+            // 从 canvas 获取图片数据
+            const image = canvas.toDataURL('image/png');
+
+            // 创建一个锚点元素
+            const a = document.createElement('a');
+            a.href = image;
+            a.download = 'test-image/' + num + '.png'; // 设置下载文件的名称
+
+            // 模拟点击操作来启动下载
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+    </script>
+</body>
+
+</html>
