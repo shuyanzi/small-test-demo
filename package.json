@@ -19,6 +19,7 @@
     "@webassemblyjs/wasm-parser": "^1.12.1",
     "crypto-js": "^4.2.0",
     "esprima": "^4.0.1",
-    "prettier": "^3.2.5"
+    "prettier": "^3.2.5",
+    "protobufjs": "^7.3.2"
   }
 }

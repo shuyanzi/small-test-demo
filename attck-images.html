@@ -1,0 +1,105 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>JSON 图片查看器</title>
+    <style>
+        .image-container {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .image-item {
+            margin: 10px;
+            text-align: center;
+        }
+        .image-item img {
+            max-width: 400px;
+            max-height: 400px;
+        }
+    </style>
+</head>
+<body>
+    <textarea id="jsonInput" rows="10" placeholder="输入 JSON 数据"></textarea>
+    <button onclick="displayImages()">显示图片</button>
+    <div id="imageContainer" class="image-container"></div>
+    <textarea id="backjsonInput" rows="10" placeholder="输入 JSON 数据"></textarea>
+    <button onclick="displayBackImages()">显示后置图片</button>
+    <div id="backImageContainer" class="image-container"></div>
+
+
+    <script>
+         function displayBackImages() {
+            let jsonInput = document.getElementById('backjsonInput').value;
+            jsonInput = jsonInput.replace(/False/ig,"false")
+            eval(`var jsonData = ${jsonInput}`);
+
+            const imageContainer = document.getElementById('backImageContainer');
+            imageContainer.innerHTML = ''; // 清空之前的图片
+
+            const { diffImages } = jsonData;
+            const { frontImages, backImages } = diffImages;
+
+            function renderImages(images, type) {
+                images.forEach((base64, index) => {
+                    const imageItem = document.createElement('div');
+                    imageItem.classList.add('image-item');
+
+                    const imageLabel = document.createElement('div');
+                    imageLabel.textContent = `${type} (${index + 1})`;
+
+                    const imageElement = document.createElement('img');
+                    imageElement.src = `${base64}`;
+
+                    imageItem.appendChild(imageLabel);
+                    imageItem.appendChild(imageElement);
+                    imageContainer.appendChild(imageItem);
+                });
+            }
+
+            renderImages(frontImages, 'Front Images');
+            renderImages(backImages, 'Back Images');
+        }
+
+        function displayImages() {
+            let jsonInput = document.getElementById('jsonInput').value;
+            jsonInput = jsonInput.replace(/False/ig,"false").replace(/True/ig,"true")
+            eval(`var jsonData = ${jsonInput}`);
+
+            const imageContainer = document.getElementById('imageContainer');
+            imageContainer.innerHTML = ''; // 清空之前的图片
+            // Object.keys(jsonData).forEach(key => {
+            //     console.log("%c Line:71 🍊 forEach", "color:#33a5ff", Array.isArray(jsonData[key]) );
+            //     if (Array.isArray(jsonData[key]) && jsonData[key].length > 0 && jsonData[key][0].startsWith('data:')) {
+
+            //     }
+            // });
+
+            function renderImages(images, type) {
+                images.forEach((base64, index) => {
+                    const imageItem = document.createElement('div');
+                    imageItem.classList.add('image-item');
+
+                    const imageLabel = document.createElement('div');
+                    imageLabel.textContent = `${type} (${index + 1})`;
+
+                    const imageElement = document.createElement('img');
+                    imageElement.src = `${base64}`;
+
+                    imageItem.appendChild(imageLabel);
+                    imageItem.appendChild(imageElement);
+                    imageContainer.appendChild(imageItem);
+                });
+            }
+            const { diffImages, list } = jsonData;
+            if (diffImages) {
+                const { frontImages, backImages } = diffImages;
+                renderImages(frontImages, 'Front Images');
+                renderImages(backImages, 'Back Images');
+            }
+            if (list) {
+                renderImages(list, 'Three Frames');
+            }
+        }
+    </script>
+</body>
+</html>

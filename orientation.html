@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>orientation</title>
+</head>
+<body>
+    <div id="content"></div>
+    <script>
+        document.getElementById('content').textContent = JSON.stringify(event);
+        window.addEventListener("deviceorientation", handleOrientation, true);
+        function handleOrientation(event) {
+            alert(JSON.stringify(event))
+            document.getElementById('content').textContent = JSON.stringify(event);
+            // 设备绕 Z 轴的旋转角度（度）
+            const alpha = event.alpha;
+            // 设备绕 X 轴的旋转角度（度）
+            const beta = event.beta; 
+            // 设备绕 Y 轴的旋转角度（度）
+            const gamma = event.gamma;
+            // 是否为绝对方向
+            // true 时，表示提供的设备方向数据是相对于地球坐标系的绝对方向。这意味着设备的方向角度与地球的方向之间存在固定的关系。
+            // false 时，表示提供的设备方向数据是相对于设备初始方向的相对方向
+            const absolute = event.absolute;
+        }
+    </script>
+</body>
+</html>

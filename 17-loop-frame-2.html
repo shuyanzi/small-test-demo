@@ -95,8 +95,8 @@
           const selectedDeviceId = videoSource.value;
           const constraints = {
             video: {
-              width: 1620,
-              height: 1200,
+              width: 1920,
+              height: 1080,
               // width: {
               //   exact: 1600
               // },
@@ -121,36 +121,31 @@
                 frameCount++
                 // if (isDetected) return;
                 const canvas = document.createElement('canvas');
-                // const canvasCtx = initSize(canvas,video)
                 const canvasCtx = cropSize(canvas,video)
+                // const canvasCtx = initSize(canvas,video)
+
 
                 const initCanvas = document.createElement('canvas');
                 const initCanvasCtx = initSize(initCanvas,video)
                 // cropInitRateSize(canvas,video)
                 var start = new Date().getTime()
-                const currentFrame = canvas.toDataURL();
-                // const hash = await sha256(currentFrame);
-                // const currentFrame = canvas.toDataURL('image/jpeg');
                 const imageData = canvasCtx.getImageData(
                   0,
                   0,
                   canvas.width,
                   canvas.height
                 )
-                const data = imageData.data;
-                const hash = await sha256Buffer(data);
-
-
                 const initImageData = initCanvasCtx.getImageData(
                   0,
                   0,
                   initCanvas.width,
                   initCanvas.height
                 )
+                const currentFrameData = imageData.data;
+                const hash = await sha256Buffer(currentFrameData);
 
                 if (frames.has(hash)) {
-                  console.log("%c Line:155 🍖 initImageData.data", "color:#93c0a4", initImageData.data);
-                  // console.log("%c Line:86 🥚 hash", "color:#ffdd4d", {hash, index: framesInfo.indexOf(hash), len: framesInfo.length,framesInfo});
+                  console.log("%c Line:86 🥚 hash", "color:#ffdd4d", {hash, index: framesInfo.indexOf(hash), len: framesInfo.length,framesInfo});
                   // console.log("%c Line:69 🌮 hash", "color:#ed9ec7", frames,hash,currentFrame);
                   isDetected = true;
                   status.textContent = '检测到重复帧';
@@ -158,10 +153,18 @@
 
                   for (const [frameHash, frameData] of frames) {
                     if (frameHash === hash) {
-                      const img = new Image();
-                      img.src = frameData.currentFrame;
-                      document.body.appendChild(img);
-                      console.log("%c Line:167 🥚 frameData", "color:#4fff4B", frameData.data);
+                      const canvas1 = document.createElement('canvas');
+                      const ctx1 = canvas1.getContext('2d');
+                      canvas.width = frameData.width;
+                      canvas.height = frameData.height;
+                      console.log("%c Line:155 🥛 frameData", "color:#ea7e5c", frameData);
+                      ctx1.putImageData(frameData.data, 0, 0);
+                      document.body.appendChild(canvas1);
+
+
+                      // const img = new Image();
+                      // img.src = frameData.currentFrameData;
+                      // document.body.appendChild(img);
                       // const hashLast = await sha256(frameData.initImg);
                       // const img2 = new Image();
                       // img2.src = frameData.initImg;
@@ -171,9 +174,10 @@
                     }
                   }
 
-                  const img = new Image();
-                  img.src = currentFrame;
-                  document.body.appendChild(img);
+                  console.log("%c Line:178 🍊 initImageData.data", "color:#6ec1c2", initImageData.data);
+                  // const img = new Image();
+                  // img.src = currentFrame;
+                  // document.body.appendChild(img);
 
                   // const nowFull = initCanvas.toDataURL()
                   // const hashNow = await sha256(nowFull);
@@ -185,7 +189,7 @@
                 } else {
                   status.textContent = '没检测到重复帧';
                   status.style.color = 'green';
-                  frames.set(hash, {currentFrame, data: initImageData.data});
+                  frames.set(hash, { data: imageData, width: canvas.width, height: canvas.height, initImageData: initImageData.data });
                   // frames.set(hash, {currentFrame, initImg: initCanvas.toDataURL()});
                   var end = new Date().getTime()
                   console.log('cost is', `${end - start}ms`)

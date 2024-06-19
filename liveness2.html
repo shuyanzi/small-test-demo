@@ -10,8 +10,7 @@
             /*             visibility: hidden; */
         }
 
-        canvas, video {
-            width: 200px;
+        canvas {
             border: 1px solid black;
         }
     </style>
@@ -21,9 +20,6 @@
 <body>
     <div>
         <h1>ncnn webassembly liveness</h1>
-        bash
-        <br>
-        sh platforms/wasm/build_sdk.sh liveness && rm -r /Users/work/fe/small-test-demo/build-wasm-example && mv build-wasm-example /Users/work/fe/small-test-demo
         <div id="config" style="height:48px"> </div>
         <div id="liveness-stage" style="height:48px"> </div>
         <div id="error-code" style="height:48px"> </div>
@@ -32,32 +28,10 @@
             <button disabled id="init-btn" style="height:48px">Init</button>
             <button disabled id="reset-btn" style="height:48px">reset</button>
         </div>
-        <div id="hint" style="height:48px">
+        <div id="hint" style="height:108px">
         </div>
-        <!-- <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br> -->
         <div>
-            <canvas id="canvas" width="640" height="640"></canvas>
+            <canvas id="canvas" width="640"></canvas>
         </div>
         <video id="video" playsinline autoplay></video>
     </div>
@@ -66,66 +40,102 @@
     <script>
         // wasm feature detect
         !function (e, t) { "object" == typeof exports && "undefined" != typeof module ? module.exports = t() : "function" == typeof define && define.amd ? define(t) : (e = "undefined" != typeof globalThis ? globalThis : e || self).wasmFeatureDetect = t() }(this, (function () { "use strict"; return { simd: function () { return Promise.resolve(WebAssembly.validate(new Uint8Array([0, 97, 115, 109, 1, 0, 0, 0, 1, 5, 1, 96, 0, 1, 123, 3, 2, 1, 0, 10, 10, 1, 8, 0, 65, 0, 253, 15, 253, 98, 11]))) } } }));
-      </script>
+    </script>
 
     <script type='text/javascript'>
-        window.getInfo = (type) => {
-            console.log("%c Line:73 🍓 type", "color:#3f7cff", type);
-            return 'getInfo from js!'
+        CONFIG = `
+        {
+            "actionInitCountThreshold": "8",
+            "bgFaceRatioX": "0.1",
+            "bgFaceRatioY": "0.1",
+            "ellipseMatchXDelta": "0.07",
+            "ellipseMatchYDelta": "0.1",
+            "outerEllipseXDelta": "0.15",
+            "outerEllipseYDelta": "0.2",
+            "ellipseXMax": "0.7",
+            "ellipseXMin": "0.3",
+            "ellipseYMax": "0.80",
+            "eyeCloseContinousCount": "1",
+            "eyeCloseSingleThreshold": "0.0",
+            "eyeCloseThreshold": "0.1",
+            "eyeOpenThreshold": "0.1412",
+            "faceFrontalCountThreshold": "2",
+            "faceMaxMissingCount": "3",
+            "faceOcclusionThreshold": "0.29",
+            "faceOcclusionThresholdV2": "0.95",
+            "faceSizeFitCountThreshold": "3",
+            "frontalPitchThreshold": "1",
+            "frontalPitchThresholdLower": "-1",
+            "frontalRollThreshold": "100",
+            "frontalYawThreshold": "0.45",
+            "imageSampleCounts": "20",
+            "imageSampleTime": "1",
+            "maxBackgroundBrightnessThreshold": "240",
+            "maxFaceBrightnessThreshold": "190",
+            "maxFaceRatioThreshold": "0.6",
+            "maxYawDelta": "2",
+            "maxYawThreshold": "0.9",
+            "minBackgroundBrightnessThreshold": "30",
+            "minFaceBrightnessThreshold": "36",
+            "minFaceRatioThreshold": "0.25",
+            "minYawThreshold": "0.15",
+            "motionFrontalYawThreshold": "0.1",
+            "mouthCloseThreshold": "0.85",
+            "mouthContinousCount": "2",
+            "mouthOpenThreshold": "0.9",
+            "positionUpdateCount": "5",
+            "statusReadyCount": "2",
+            "stillThreshold": "0.18",
+            "stillThresholdRatio": "0.15",
+            "xPaddingThreshold": "0.05",
+            "yPaddingThreshold": "0.03",
+            "yawDiffThreshold": "0.3",
+            "yawStillThreshold": "0.15",
+            "yawThreshold": "0.2",
+            "blinkDetectionStageSwitch": true
         }
-        const CONFIG = {
-            //
-            ellipseMatchXDelta: '0.1',
-            ellipseMatchYDelta: '0.15',
-            ellipseFaceWidthDeltaRatio: '0.1',
-            // distant face ellipse parameters
-            ellipseXMin: '0.3',
-            ellipseXMax: '0.7',
-            ellipseYMax: '0.8',
-            // ellipseXMax_return_by_acv_get_config = ellipseXMax + (ellipseMatchXDelta / 2)
-
-            // close face ellipse parameters
-            // ellipseXMax_face_near = (ellipseXMax - 0.5) * ellipseEnlargeRatio
-            // minimal ratio > 1.35
-            ellipseEnlargeRatio: '1.4',
-            // i.e. close face's ellipseMatchXDelta: '0.1',
-            largeModeEllipseMatchXDelta: '0.2',
-            // i.e. close face's ellipseYMax: '0.8',
-            largeModeEllipseYMax: '1',
-
-            faceOcclusionThresholdV2: '0.99',
-            outerEllipseXDelta: '0.15',
-            outerEllipseYDelta: '0.2',
-        }
+        `;
         var Module = {};
 
         var has_simd;
+        var has_threads;
 
         var wasmModuleLoaded = false;
         var wasmModuleLoadedCallbacks = [];
 
-        Module.locateFile = function (s) {
-            return (
-                `build-wasm-example/` + s
-            )
-        }
         Module.onRuntimeInitialized = function () {
             wasmModuleLoaded = true;
             for (var i = 0; i < wasmModuleLoadedCallbacks.length; i++) {
                 wasmModuleLoadedCallbacks[i]();
             }
         }
+        Module.locateFile = function (s) {
+            return (
+                `build-wasm-example/` + s
+            )
+        }
 
         wasmFeatureDetect.simd().then(simdSupported => {
             has_simd = simdSupported;
 
             // wasmFeatureDetect.threads().then(threadsSupported => {
+                // has_threads = threadsSupported;
 
                 if (has_simd) {
-                    liveness_module_name = 'liveness-simd';
+                    if (has_threads) {
+                        liveness_module_name = 'liveness-simd-threads';
+                    } else {
+                        liveness_module_name = 'liveness-simd';
+                    }
                 } else {
-                    liveness_module_name = 'liveness-basic';
+                    if (has_threads) {
+                        liveness_module_name = 'liveness-threads';
+                    } else {
+                        liveness_module_name = 'liveness-basic';
+                    }
                 }
+
+                console.log('load ' + liveness_module_name);
 
                 var livenesswasm = '/build-wasm-example/' + liveness_module_name + '.wasm';
                 var livenessjs = '/build-wasm-example/' + liveness_module_name + '.js';
@@ -133,14 +143,11 @@
                 fetch(livenesswasm)
                     .then(response => response.arrayBuffer())
                     .then(buffer => {
-                        // setTimeout(() => {
-                        //     console.log({buffer}, window._acv_detect_init)
-                        //     window._acv_detect_init()
-                        // }, 1000)
                         Module.wasmBinary = buffer;
                         var script = document.createElement('script');
                         script.src = livenessjs;
                         script.onload = function () {
+                            console.log('Emscripten boilerplate loaded.');
                         }
                         document.body.appendChild(script);
                         var btn = document.getElementById('init-btn');
@@ -165,7 +172,7 @@
             return output;
         }
 
-        window.addEventListener('DOMContentLoaded', async function () {
+        window.addEventListener('DOMContentLoaded', function () {
             var isStreaming = false;
             switchcamerabtn = document.getElementById('switch-camera-btn');
             video = document.getElementById('video');
@@ -188,7 +195,7 @@
                 //Setup image memory
                 var id = ctx.getImageData(0, 0, canvas.width, canvas.height);
                 var d = id.data;
-                console.log({wasmModuleLoaded})
+
                 if (wasmModuleLoaded) {
                     mallocAndCallSFilter();
                 } else {
@@ -203,16 +210,9 @@
 
                     dst = _malloc(d.length);
 
-                    // console.log('window.navigator.userAgent1', window.navigator.userAgent);
-                    // const userAgent = window.btoa(JSON.stringify({ua: window.navigator.userAgent}));
-                    // const intArray = window.intArrayFromString(userAgent);
-                    // const ptr = _malloc(intArray.length);
-                    // Module.HEAPU8.set(intArray, ptr);
-                    // Module._setInfo(ptr)
-                    // Module._free(ptr);
-                    // console.log('sFilter window.navigator.userAgent1', window.navigator.userAgent);
+                    //console.log("What " + d.length);
+
                     sFilter();
-                    // save_info()
                 }
             });
 
@@ -238,79 +238,58 @@
             var configDiv = document.getElementById('config');
             var resetBtn = document.getElementById('reset-btn');
             initBtn.addEventListener('click', function () {
-                // const configText = btoa(JSON.stringify({test:123}));
-                const configText = btoa(JSON.stringify([{test:123}]));
+                const configText = btoa(CONFIG);
                 const intArray = intArrayFromString(configText);
                 const ptr = _malloc(intArray.length);
                 HEAPU8.set(intArray, ptr);
-                _acv_postmessage(2, ptr)
 
-                // console.log("%c Line:248 🥐 ptr", "color:#ffdd4d", ptr,ptr.toString());
-                // const err = _acv_init(ptr.toString());
-                // if (err) {
-                //     var errText = UTF8ToString(err);
-                //     _free(errText);
-                // }
-                // _free(ptr);
+                const err = _acv_init(ptr);
+                console.log("%c Line:247 🍭 _acv_init", "color:#e41a6a", err);
+                if (err) {
+                    var errText = UTF8ToString(err);
+                    _free(errText);
+                    console.log('init failed: ' + errText)
+                }
+                _free(ptr);
 
-                // var c = _acv_get_config();
-                // configDiv.innerHTML = native_read_string(c);
-                // resetBtn.disabled = false;
+                var c = _acv_get_config();
+                configDiv.innerHTML = native_read_string(c);
+                resetBtn.disabled = false;
             });
 
             resetBtn.addEventListener('click', function () {
                 _acv_reset();
             });
-            // capture();
-            
+
+            capture();
         });
 
-        function test() {
-            return new Promise((resolve, reject) => {
-                setTimeout(() => {
-                    resolve(123312);
-                }, 3000);
-            })
-        }
-
-        async function capture() {
+        function capture() {
             var constraints = {
                 audio: false,
                 video: {
                     width: 640,
-                    height: 480,
+                    height: 640,
                     facingMode: shouldFaceUser ? 'user' : 'environment'
                 }
             };
-            
-            console.log({constraints})
-            // const mediaStream = await navigator.mediaDevices.getUserMedia(constraints)
             navigator.mediaDevices.getUserMedia(constraints)
-            .then(function (mediaStream) {
-                console.log("%c Line:275 🌭 mediaStream", "color:#6ec1c2", mediaStream);
-                var video = document.querySelector('video');
-                stream = mediaStream;
-                video.srcObject = mediaStream;
-                video.onloadedmetadata = function (e) {
-                    video.play();
-                };
-            })
-            .catch(function (err) {
-                console.log(err)
-            });
-            // console.log({mediaStream})
-            // var video = document.querySelector('video');
-            // stream = mediaStream;
-            // video.srcObject = mediaStream;
-            // video.onloadedmetadata = function (e) {
-            //     video.play();
-            // };
+                .then(function (mediaStream) {
+                    var video = document.querySelector('video');
+                    stream = mediaStream;
+                    video.srcObject = mediaStream;
+                    video.onloadedmetadata = function (e) {
+                        video.play();
+                    };
+                })
+                .catch(function (err) {
+                    console.log(err.message);
+                });
         }
 
 
 
         function native_detect() {
-            console.log(' native_detect')
             var canvas = document.getElementById('canvas');
             var ctx = canvas.getContext('2d');
             var hint = document.getElementById("hint");
@@ -319,30 +298,23 @@
 
             var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
             var data = imageData.data;
+            console.log("%c Line:301 🍧 data", "color:#fca650", data, canvas.width, canvas.height);
 
             HEAPU8.set(data, dst);
 
-            // var output_ptr = _acv_detect999(dst, canvas.width, canvas.height);
-            const info = btoa(JSON.stringify(canvas.toDataURL('image/jpeg')));
-            const intArray1 = intArrayFromString(info);
-            const ptr1 = _malloc(intArray1.length);
-            HEAPU8.set(intArray1, ptr1);
-            // console.log('aaa:intArray1', imageData.data, canvas.toDataURL('image/jpeg'), {l:intArray1.length,ptr1})
-            // var output_ptr = _acv_detect(dst, canvas.width, canvas.height);
-            var output_ptr = _acv_live_detect(dst, canvas.width, canvas.height, ptr1);
-            _free(ptr1);
-            // var output_ptr = _acv_live_detect(dst, canvas.width, canvas.height, canvas.toDataURL('image/jpeg'));
+            console.log("%c Line:305 🥃 _acv_detect", "color:#ffdd4d");
+            var output_ptr = _acv_detect(dst, canvas.width, canvas.height);
             if (output_ptr != null) {
                 var output = UTF8ToString(output_ptr)
-                console.log({output});
                 _free(output_ptr);
                 hint.innerHTML = output;
                 try {
                     var _output = JSON.parse(output);
-                    console.log({_output})
+                    console.log("model_output: " + output);
                     error_code_div.innerHTML = "error code: " + _output['err_code'];
                     stage_div.innerHTML = "current stage: " + _output['stage_code'];
                 } catch (e) {
+                    console.log(e);
                     return;
                 }
             }
@@ -350,19 +322,6 @@
             // var result = HEAPU8.subarray(dst, dst + data.length);
             // imageData.data.set(result);
             // ctx.putImageData(imageData, 0, 0);
-            // 创建一个新的 Canvas 元素
-            // var canvas2 = document.createElement('canvas');
-            // canvas2.width = id.width;
-            // canvas2.height = id.height;
-
-            // // 将 imageData 绘制到 Canvas 上
-            // var ctx = canvas2.getContext('2d');
-            // ctx.putImageData(id, 0, 0);
-
-            // // 将 Canvas 转换为 base64 图片
-            // var base64Image = canvas.toDataURL();
-
-            // console.log(base64Image);
         }
 
         //Request Animation Frame function
@@ -372,45 +331,9 @@
             ctx.fillRect(0, 0, w, h);
             ctx.drawImage(video, 0, 0, w, h);
 
-            // native_detect();
-            fpsIntervalDetect()
+            native_detect();
 
             window.requestAnimationFrame(sFilter);
-        }
-
-        // const fps = 30 // 1s 30帧
-        const fps = 1 // 1s 1帧
-        const fpsInterval = 1000 / fps // 1000=1s
-        var now = 0
-        var then = 0
-        var past = 0
-        function fpsIntervalDetect() {
-            now = window.performance.now()
-            past = now - then
-            if (past > fpsInterval) {
-                then = now - (past % fpsInterval)
-                // save_info();
-                native_detect();
-            }
-        }
-        window.livenessProcessResult = (res) => {
-            console.log('window.livenessProcessResult', res)
-        }
-        function save_info() {
-            // const configText = btoa(JSON.stringify({
-            //     ua: window.navigator.userAgent,
-            // }));
-            // const intArray = intArrayFromString(configText);
-            // const ptr = _malloc(intArray.length);
-            // HEAPU8.set(intArray, ptr);
-
-            // const info = _acv_live_detect(ptr);
-            // console.log({ info })
-            // if (info) {
-            //     var errText = UTF8ToString(err);
-            //     _free(errText);
-            // }
-            // _free(ptr);
         }
     </script>
 

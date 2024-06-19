@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vite + Vue + TS</title>
+
+  <script>
+    // wasm feature detect
+    !function (e, t) { "object" == typeof exports && "undefined" != typeof module ? module.exports = t() : "function" == typeof define && define.amd ? define(t) : (e = "undefined" != typeof globalThis ? globalThis : e || self).wasmFeatureDetect = t() }(this, (function () { "use strict"; return { simd: function () { return Promise.resolve(WebAssembly.validate(new Uint8Array([0, 97, 115, 109, 1, 0, 0, 0, 1, 5, 1, 96, 0, 1, 123, 3, 2, 1, 0, 10, 10, 1, 8, 0, 65, 0, 253, 15, 253, 98, 11]))) } } }));
+  </script>
+</head>
+
+<body>
+  <div id="app"></div>
+  <script type="module" src="/src/main.ts"></script>
+
+  <script type='text/javascript'>
+    CONFIG = `
+      {
+          "actionInitCountThreshold": "8",
+          "bgFaceRatioX": "0.1",
+          "bgFaceRatioY": "0.1",
+          "ellipseMatchXDelta": "0.07",
+          "ellipseMatchYDelta": "0.1",
+          "outerEllipseXDelta": "0.15",
+          "outerEllipseYDelta": "0.2",
+          "ellipseXMax": "0.7",
+          "ellipseXMin": "0.3",
+          "ellipseYMax": "0.80",
+          "eyeCloseContinousCount": "1",
+          "eyeCloseSingleThreshold": "0.0",
+          "eyeCloseThreshold": "0.1",
+          "eyeOpenThreshold": "0.1412",
+          "faceFrontalCountThreshold": "2",
+          "faceMaxMissingCount": "3",
+          "faceOcclusionThreshold": "0.29",
+          "faceOcclusionThresholdV2": "0.95",
+          "faceSizeFitCountThreshold": "3",
+          "frontalPitchThreshold": "1",
+          "frontalPitchThresholdLower": "-1",
+          "frontalRollThreshold": "100",
+          "frontalYawThreshold": "0.45",
+          "imageSampleCounts": "20",
+          "imageSampleTime": "1",
+          "maxBackgroundBrightnessThreshold": "240",
+          "maxFaceBrightnessThreshold": "190",
+          "maxFaceRatioThreshold": "0.6",
+          "maxYawDelta": "2",
+          "maxYawThreshold": "0.9",
+          "minBackgroundBrightnessThreshold": "30",
+          "minFaceBrightnessThreshold": "36",
+          "minFaceRatioThreshold": "0.25",
+          "minYawThreshold": "0.15",
+          "motionFrontalYawThreshold": "0.1",
+          "mouthCloseThreshold": "0.85",
+          "mouthContinousCount": "2",
+          "mouthOpenThreshold": "0.9",
+          "positionUpdateCount": "5",
+          "statusReadyCount": "2",
+          "stillThreshold": "0.18",
+          "stillThresholdRatio": "0.15",
+          "xPaddingThreshold": "0.05",
+          "yPaddingThreshold": "0.03",
+          "yawDiffThreshold": "0.3",
+          "yawStillThreshold": "0.15",
+          "yawThreshold": "0.2",
+          "blinkDetectionStageSwitch": true
+      }
+      `;
+    var Module = {};
+
+    var has_simd;
+    var has_threads;
+
+    var wasmModuleLoaded = false;
+    var wasmModuleLoadedCallbacks = [];
+
+    Module.onRuntimeInitialized = function () {
+      wasmModuleLoaded = true;
+      for (var i = 0; i < wasmModuleLoadedCallbacks.length; i++) {
+        wasmModuleLoadedCallbacks[i]();
+      }
+    }
+    Module.locateFile = function (s) {
+      return (
+        `build-wasm-example/` + s
+      )
+    }
+
+    wasmFeatureDetect.simd().then(simdSupported => {
+      has_simd = simdSupported;
+
+      // wasmFeatureDetect.threads().then(threadsSupported => {
+      // has_threads = threadsSupported;
+
+      if (has_simd) {
+        if (has_threads) {
+          liveness_module_name = 'liveness-simd-threads';
+        } else {
+          liveness_module_name = 'liveness-simd';
+        }
+      } else {
+        if (has_threads) {
+          liveness_module_name = 'liveness-threads';
+        } else {
+          liveness_module_name = 'liveness-basic';
+        }
+      }
+
+      console.log('load ' + liveness_module_name);
+
+      var livenesswasm = '/build-wasm-example/' + liveness_module_name + '.wasm';
+      var livenessjs = '/build-wasm-example/' + liveness_module_name + '.js';
+
+      fetch(livenesswasm)
+        .then(response => response.arrayBuffer())
+        .then(buffer => {
+          Module.wasmBinary = buffer;
+          var script = document.createElement('script');
+          script.src = livenessjs;
+          script.onload = function () {
+            console.log('Emscripten boilerplate loaded.');
+          }
+          document.body.appendChild(script);
+          var btn = document.getElementById('init-btn');
+          btn.disabled = false;
+        });
+
+      // });
+    });
+
+    var shouldFaceUser = true;
+    var stream = null;
+    var w = 640;
+    var h = 640;
+
+    var dst = null;
+    var resultarray = null;
+    var resultbuffer = null;
+
+    function native_read_string(ptr) {
+      var output = UTF8ToString(ptr)
+      _free(ptr);
+      return output;
+    }
+
+    setTimeout(() => {
+
+      // window.addEventListener('DOMContentLoaded', function () {
+      var isStreaming = false;
+      switchcamerabtn = document.getElementById('switch-camera-btn');
+      video = document.getElementById('video');
+      canvas = document.getElementById('canvas');
+      ctx = canvas.getContext('2d');
+
+      // Wait until the video stream canvas play
+      video.addEventListener('canplay', function (e) {
+        if (!isStreaming) {
+          // videoWidth isn't always set correctly in all browsers
+          if (video.videoWidth > 0) h = video.videoHeight / (video.videoWidth / w);
+          canvas.setAttribute('width', w);
+          canvas.setAttribute('height', h);
+          isStreaming = true;
+        }
+      }, false);
+
+      // Wait for the video to start to play
+      video.addEventListener('play', function () {
+        //Setup image memory
+        var id = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        var d = id.data;
+
+        if (wasmModuleLoaded) {
+          mallocAndCallSFilter();
+        } else {
+          wasmModuleLoadedCallbacks.push(mallocAndCallSFilter);
+        }
+
+        function mallocAndCallSFilter() {
+          if (dst != null) {
+            _free(dst);
+            dst = null;
+          }
+
+          dst = _malloc(d.length);
+
+          //console.log("What " + d.length);
+
+          sFilter();
+        }
+      });
+
+      // check whether we can use facingMode
+      var supports = navigator.mediaDevices.getSupportedConstraints();
+      if (supports['facingMode'] === true) {
+        switchcamerabtn.disabled = false;
+      }
+
+      switchcamerabtn.addEventListener('click', function () {
+        if (stream == null)
+          return
+
+        stream.getTracks().forEach(t => {
+          t.stop();
+        });
+
+        shouldFaceUser = !shouldFaceUser;
+        capture();
+      });
+
+      var initBtn = document.getElementById('init-btn');
+      var configDiv = document.getElementById('config');
+      var resetBtn = document.getElementById('reset-btn');
+      initBtn.addEventListener('click', function () {
+        const configText = btoa(CONFIG);
+        const intArray = intArrayFromString(configText);
+        const ptr = _malloc(intArray.length);
+        HEAPU8.set(intArray, ptr);
+
+        const err = _acv_init(ptr);
+        console.log("%c Line:247 🍭 _acv_init", "color:#e41a6a", err);
+        if (err) {
+          var errText = UTF8ToString(err);
+          _free(errText);
+          console.log('init failed: ' + errText)
+        }
+        _free(ptr);
+
+        var c = _acv_get_config();
+        configDiv.innerHTML = native_read_string(c);
+        resetBtn.disabled = false;
+      });
+
+      resetBtn.addEventListener('click', function () {
+        _acv_reset();
+      });
+
+      capture();
+      // });
+    }, 30000000000000)
+
+
+    function capture() {
+      var constraints = {
+        audio: false,
+        video: {
+          width: 640,
+          height: 640,
+          facingMode: shouldFaceUser ? 'user' : 'environment'
+        }
+      };
+      navigator.mediaDevices.getUserMedia(constraints)
+        .then(function (mediaStream) {
+          var video = document.querySelector('video');
+          stream = mediaStream;
+          video.srcObject = mediaStream;
+          video.onloadedmetadata = function (e) {
+            video.play();
+          };
+        })
+        .catch(function (err) {
+          console.log(err.message);
+        });
+    }
+
+
+
+    function native_detect() {
+      var canvas = document.getElementById('canvas');
+      var ctx = canvas.getContext('2d');
+      var hint = document.getElementById("hint");
+      var error_code_div = document.getElementById("error-code");
+      var stage_div = document.getElementById("liveness-stage");
+
+      var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      var data = imageData.data;
+      console.log("%c Line:301 🍧 data", "color:#fca650", data, canvas.width, canvas.height);
+
+      HEAPU8.set(data, dst);
+
+      console.log("%c Line:305 🥃 _acv_detect", "color:#ffdd4d");
+      var output_ptr = _acv_detect(dst, canvas.width, canvas.height);
+      if (output_ptr != null) {
+        var output = UTF8ToString(output_ptr)
+        _free(output_ptr);
+        hint.innerHTML = output;
+        try {
+          var _output = JSON.parse(output);
+          console.log("model_output: " + output);
+          error_code_div.innerHTML = "error code: " + _output['err_code'];
+          stage_div.innerHTML = "current stage: " + _output['stage_code'];
+        } catch (e) {
+          console.log(e);
+          return;
+        }
+      }
+
+      // var result = HEAPU8.subarray(dst, dst + data.length);
+      // imageData.data.set(result);
+      // ctx.putImageData(imageData, 0, 0);
+    }
+
+    //Request Animation Frame function
+    var sFilter = function () {
+      if (video.paused || video.ended) return;
+
+      ctx.fillRect(0, 0, w, h);
+      ctx.drawImage(video, 0, 0, w, h);
+
+      native_detect();
+
+      window.requestAnimationFrame(sFilter);
+    }
+  </script>
+</body>
+
+</html>

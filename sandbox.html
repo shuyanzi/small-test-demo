@@ -1,18 +1,255 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sandbox</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>osp sdk demo</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reset-css@5.0.2/reset.min.css">
+  <script>
+    var AAI_OSP = (function () {
+      'use strict';
+      var y = Object.defineProperty;
+      var u = (i, a, r) =>
+        a in i
+          ? y(i, a, {
+            enumerable: !0,
+            configurable: !0,
+            writable: !0,
+            value: r,
+          })
+          : (i[a] = r);
+      var l = (i, a, r) => (u(i, typeof a != 'symbol' ? a + '' : a, r), r);
+      var i = ((t) => (
+        (t.local = 'https://localhost:4000'),
+        (t.sandbox = 'https://sandbox-oop-client.advai.net'),
+        (t.id = 'https://oop-sg-client.advance.ai'),
+        (t.sg = 'https://oop-id-client.advance.ai'),
+        t
+      ))(i || {}),
+        a = ((t) => (
+          (t.load = 'load'),
+          (t.ready = 'ready'),
+          (t.complete = 'complete'),
+          (t.error = 'error'),
+          t
+        ))(a || {});
+      function r(t) {
+        return !!(
+          t &&
+          (t.nodeType === Node.ELEMENT_NODE ||
+            t.nodeType === Node.DOCUMENT_NODE ||
+            t.nodeType === Node.DOCUMENT_FRAGMENT_NODE)
+        );
+      }
+      function f(t) {
+        const e = document.createElement('iframe');
+        return (
+          (e.style.display = 'none'),
+          e.classList.add('aai-osp-iframe'),
+          (e.style.width = '100%'),
+          (e.style.height = '100%'),
+          (e.sandbox =
+            'allow-scripts allow-same-origin allow-popups allow-forms allow-modals allow-top-navigation-by-user-activation'),
+          (e.frameBorder = '0'),
+          (e.allow = 'camera;microphone'),
+          (e.allowFullscreen = !0),
+          (e.src = t),
+          e
+        );
+      }
+      class d {
+        constructor() {
+          l(this, 'options');
+          l(this, 'iframeEl');
+          l(this, 'containerEl');
+          l(this, 'version', '0.0.1');
+        }
+        static init(e, n) {
+          if (!r(e))
+            throw new Error(
+              'init(...): Target container is not a DOM element.'
+            );
+          const o = new d();
+          return (
+            (o.containerEl = e),
+            (o.options = n),
+            o.initIframe(),
+            o.bindEvent(),
+            o
+          );
+        }
+        bindEvent() {
+          window.addEventListener('message', (e) => {
+            if (e.origin === this.baseUrl) {
+              const n = e == null ? void 0 : e.data,
+                o = n == null ? void 0 : n.type,
+                s = n == null ? void 0 : n.payload;
+              o &&
+                (o === 'hookEvent'
+                  ? this.callHookEvent(s)
+                  : o === 'sdkEvent'
+                    ? this.options.onEvent && this.options.onEvent(s)
+                    : console.warn(`sandbox get unknow event:${o}`));
+            }
+          });
+        }
+        get baseUrl() {
+          return 'https://stg-osp-client.advai.net';
+          // return 'https://pre-oop-client.advai.cn';
+          // https://pre-oop-client.advai.cn/v2/engine/flow?sdkToken=b340026c-ca1b-4db1-b0de-a465331038a8
+          // return 'https://localhost:4000';
+        }
+        get workflowUrl() {
+          var n, o;
+          const e = new URL(this.baseUrl);
+          return (
+            (e.pathname = '/v2/engine/flow'),
+            e.searchParams.set('sdkToken', this.options.token),
+            e.searchParams.set('isWebSdk', '1'),
+            e.searchParams.set('language', this.options.language || ''),
+            (n = this.options.videoRecorder) != null &&
+            n.enable &&
+            e.searchParams.set(
+              'videoBitsPerSecond',
+              String(
+                ((o = this.options.videoRecorder) == null
+                  ? void 0
+                  : o.videoBitsPerSecond) || 2e5
+              )
+            ),
+            e.href
+          );
+        }
+        callHookEvent(e) {
+          var n, o, s, c, p, h, E, m;
+          if (e)
+            switch (e.type) {
+              case a.load:
+                (o = (n = this.options).onLoad) == null || o.call(n);
+                break;
+              case a.ready:
+                (c = (s = this.options).onReady) == null || c.call(s);
+                break;
+              case a.complete:
+                (h = (p = this.options).onComplete) == null ||
+                  h.call(p, e.data);
+                break;
+              case a.error:
+                (m = (E = this.options).onError) == null || m.call(E, e.data);
+                break;
+              default:
+                console.warn(`hook event: ${e.type} can not handle`);
+                break;
+            }
+        }
+        initIframe() {
+          (this.iframeEl = f(this.workflowUrl)),
+            this.containerEl.appendChild(this.iframeEl);
+        }
+        open() {
+          this.iframeEl.style.display = 'block';
+        }
+        close() {
+          this.iframeEl.style.display = 'none';
+        }
+        destroy() {
+          this.iframeEl.remove();
+        }
+      }
+      return d;
+    })();
+  </script>
+  <style>
+    #osp-wrap {
+      width: 100vw;
+      height: 100vh;
+      max-width: 400px;
+      margin: 0 auto;
+    }
+
+    .video-container {
+      display: inline-block;
+      margin: 10px;
+    }
+  </style>
 </head>
+<script>
+  window.NewMediaRecorder = MediaRecorder
+  window.onload = function () {
+
+    const element = document.querySelector('#osp-wrap');
+    element.style.maxHeight = `${window.innerHeight}px`;
+  }
+</script>
+<script src="https://unpkg.com/vconsole@latest/dist/vconsole.min.js"></script>
+<script>
+  // VConsole will be exported to `window.VConsole` by default.
+  var vConsole = new window.VConsole();
+</script>
+
 <body>
-    <iframe>
-    </iframe>
-    <script>
-      const win = frames[0].window;
-      console.log("%c Line:13 🥥 win", "color:#33a5ff", win);
-      console.log(win.globalThis === globalThis); // true
-      console.log(win.Array === Array); // true
-    </script>
+  <div id="osp-wrap"></div>
+  <div id="show-video"></div>
+  <script>
+    const videoList = [];
+    (async () => {
+      const searchData = new URLSearchParams(location.search);
+      const sdkToken = searchData.get('sdkToken');
+      const container = document.querySelector('#osp-wrap');
+      const osp = AAI_OSP.init(container, {
+        token: sdkToken,
+        environment: 'sandbox',
+        language: 'en',
+        videoRecorder: {
+          enable: false,
+          videoBitsPerSecond: '',
+        },
+        onReady() {
+          console.log('onReady');
+          osp.open();
+        },
+        onLoad() {
+          console.log('onload');
+        },
+        onError() {
+          console.error('onerror');
+        },
+        onEvent(data) {
+          console.log(data, '====');
+          if (data.type === 'video-recorded') {
+            const videoUrl = URL.createObjectURL(data.data.videoBlob);
+            videoList.push({
+              videoUrl,
+            });
+            console.log('data===========', data);
+          }
+        },
+        onComplete() {
+          console.log('onCompleted')
+          const ospWrap = document.getElementById('osp-wrap');
+          ospWrap.style.display = 'none';
+          showVideo();
+        },
+      });
+    })();
+    function showVideo() {
+      const showVideoContainer = document.getElementById('show-video');
+
+      videoList.forEach((video) => {
+        const videoContainer = document.createElement('div');
+        videoContainer.classList.add('video-container');
+
+        const videoElement = document.createElement('video');
+        videoElement.src = video.videoUrl;
+        videoElement.controls = true;
+        videoElement.width = 320;
+        videoElement.height = 240;
+        videoContainer.appendChild(videoElement);
+        showVideoContainer.appendChild(videoContainer);
+      });
+    }
+  </script>
 </body>
+
 </html>
